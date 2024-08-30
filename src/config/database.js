@@ -1,4 +1,6 @@
+require("dotenv").config();
 const mongoose = require("mongoose");
+
 const dbState = [
   {
     value: 0,
@@ -19,9 +21,7 @@ const dbState = [
 ];
 
 const connection = async () => {
-  await mongoose.connect(
-    "mongodb+srv://Nam:0123456789@cluster0.ayj6j.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
-  );
+  await mongoose.connect(process.env.MONGODB_URI);
   const state = Number(mongoose.connection.readyState);
   console.log(dbState.find((f) => f.value == state).label, "to db"); // connected to db
 };
