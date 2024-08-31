@@ -1,4 +1,9 @@
-const { signupService, loginService } = require("../service/user.service");
+const {
+  signupService,
+  loginService,
+  forgotPasswordService,
+  resetPasswordService,
+} = require("../service/user.service");
 const { validationResult } = require("express-validator");
 
 const postSignupUser = async (req, res) => {
@@ -46,7 +51,49 @@ const postLoginUser = async (req, res) => {
   }
 };
 
+const postForgotPassword = async (req, res) => {
+  try {
+    const { email } = req.body;
+    let data = {
+      email,
+    };
+    await forgotPasswordService(data);
+    return res.status(200).json({
+      DT: null,
+      EM: "OTP sent",
+    });
+  } catch (error) {
+    return res.status(400).json({
+      DT: null,
+      EM: error.message,
+    });
+  }
+};
+
+const postResetPassword = async (req, res) => {
+  try {
+    const { email, otp, newPassword } = req.body;
+    let data = {
+      email,
+      otp,
+      newPassword,
+    };
+    await resetPasswordService(data);
+    return res.status(200).json({
+      DT: null,
+      EM: "Reset password successfully",
+    });
+  } catch (error) {
+    return res.status(400).json({
+      DT: null,
+      EM: error.message,
+    });
+  }
+};
+
 module.exports = {
   postSignupUser,
   postLoginUser,
+  postForgotPassword,
+  postResetPassword,
 };
