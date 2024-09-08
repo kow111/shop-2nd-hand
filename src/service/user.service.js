@@ -47,7 +47,25 @@ const loginService = async (data) => {
   }
 };
 
-const forgotPasswordService = async (data) => {
+const verifiedUserService = async (data) => {
+  try {
+    const { email, otp } = data;
+    const user = await User.findOne({ email });
+    if (!user) {
+      throw new Error("User not found");
+    }
+    if (user.otp !== otp) {
+      throw new Error("OTP is incorrect");
+    }
+    user.is_verified = true;
+    await user.save();
+    user.otp = null;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
+const sendOTPService = async (data) => {
   try {
     const { email } = data;
     const user = await User.findOne({ email });
@@ -60,7 +78,7 @@ const forgotPasswordService = async (data) => {
     const mailOptions = {
       from: "nguyenducphu200321@gmail.com",
       to: user.email,
-      subject: "Password Reset OTP",
+      subject: `Your OTP for SecondHandShop`,
       text: `Your OTP is: ${otp}. `,
     };
     try {
@@ -96,6 +114,7 @@ const resetPasswordService = async (data) => {
 module.exports = {
   signupService,
   loginService,
-  forgotPasswordService,
+  sendOTPService,
   resetPasswordService,
+  verifiedUserService,
 };
