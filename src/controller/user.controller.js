@@ -70,7 +70,7 @@ const postVerifiedUser = async (req, res) => {
       EM: error.message,
     });
   }
-}
+};
 
 const postSendOTP = async (req, res) => {
   try {
