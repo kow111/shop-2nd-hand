@@ -10,7 +10,6 @@ const userSchema = new mongoose.Schema({
   isActive: { type: Boolean, default: true },
   address: { type: String },
   otp: { type: String },
-  is_verified: { type: Boolean, default: false },
 });
 
 const User = mongoose.model("User", userSchema);
