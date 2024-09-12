@@ -6,7 +6,7 @@ const {
   postSendOTP,
   postResetPassword,
   postVerifiedUser,
-} = require("../controller/user.controller");
+} = require("../controller/auth.controller");
 const routerAPI = express.Router();
 
 routerAPI.post("/signup", createUserValidator, postSignupUser);
