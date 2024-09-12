@@ -6,3 +6,5 @@ routerAPI.get("/");
 routerAPI.post("/");
 routerAPI.put("/");
 routerAPI.delete("/");
+
+module.exports = routerAPI;
