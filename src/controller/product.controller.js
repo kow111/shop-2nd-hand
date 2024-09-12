@@ -2,12 +2,12 @@ const { createProductService } = require("../service/product.service");
 
 const postCreateProduct = async (req, res) => {
   try {
-    const { name, price, description, image } = req.body;
+    const { productName, price, description, image } = req.body;
     let data = {
-      name,
+      productName,
       price,
       description,
-      image,
+      imageBanner,
     };
     let rs = await createProductService(data);
     return res.status(200).json({
