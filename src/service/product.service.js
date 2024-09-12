@@ -2,12 +2,23 @@ const Product = require("../model/product.model");
 
 const createProductService = async (data) => {
   try {
-    const { productName, price, description, image } = data;
+    const {
+      productName,
+      description,
+      size,
+      category,
+      quantity,
+      images,
+      price,
+    } = data;
     let rs = await Product.create({
       productName,
-      price,
       description,
-      image,
+      size,
+      category,
+      quantity,
+      images,
+      price,
     });
     return rs;
   } catch (error) {
