@@ -4,7 +4,7 @@ const {
   verifiedUserService,
   resetPasswordService,
   sendOTPService,
-} = require("../service/user.service");
+} = require("../service/auth.service");
 const { validationResult } = require("express-validator");
 
 const postSignupUser = async (req, res) => {
