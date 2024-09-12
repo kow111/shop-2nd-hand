@@ -57,7 +57,7 @@ const verifiedUserService = async (data) => {
     if (user.otp !== otp) {
       throw new Error("OTP is incorrect");
     }
-    user.isVerified = true;
+    user.is_verified = true;
     user.otp = null;
     await user.save();
   } catch (error) {
