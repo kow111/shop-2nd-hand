@@ -25,5 +25,12 @@ const auth = (req, res, next) => {
     res.status(400).json({ DT: null, EM: "Invalid token." });
   }
 };
+const requireAdmin = (req, res, next) => {
+  if (req.user && req.user.role === "ADMIN") {
+    next();
+  } else {
+    res.status(403).json({ DT: null, EM: "Access denied. Admins only." });
+  }
+};
 
-module.exports = auth;
+module.exports = { auth, requireAdmin };
