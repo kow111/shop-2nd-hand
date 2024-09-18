@@ -73,8 +73,18 @@ const getProductByIdService = async (id) => {
   }
 };
 
+const updateProductService = async (id, data) => {
+  try {
+    let rs = await Product.findByIdAndUpdate(id, data);
+    return rs;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
 module.exports = {
   createProductService,
   getProductService,
   getProductByIdService,
+  updateProductService,
 };
