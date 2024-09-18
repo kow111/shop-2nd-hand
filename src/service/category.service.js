@@ -18,7 +18,17 @@ const getCategoryService = async () => {
   }
 };
 
+const putUpdateCategoryService = async (id, data) => {
+  try {
+    const rs = await Category.findByIdAndUpdate(id, data, { new: true });
+    return rs;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
 module.exports = {
   createCategoryService,
   getCategoryService,
+  putUpdateCategoryService,
 };
