@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const Cart = require("./cart.model");
 
 const userSchema = new mongoose.Schema({
   username: { type: String, default: "" },
@@ -14,7 +15,7 @@ const userSchema = new mongoose.Schema({
 });
 
 userSchema.post("save", async function (user) {
-  await Cart.create({ userId: user._id, items: [] });
+  await Cart.create({ user: user._id, items: [] });
 });
 
 const User = mongoose.model("User", userSchema);
