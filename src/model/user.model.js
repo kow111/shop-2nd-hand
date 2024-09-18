@@ -13,6 +13,10 @@ const userSchema = new mongoose.Schema({
   otp: { type: String, default: null },
 });
 
+userSchema.post("save", async function (user) {
+  await Cart.create({ userId: user._id, items: [] });
+});
+
 const User = mongoose.model("User", userSchema);
 
 module.exports = User;
