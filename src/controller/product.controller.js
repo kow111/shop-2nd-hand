@@ -1,6 +1,7 @@
 const {
   createProductService,
   getProductService,
+  getProductByIdService,
 } = require("../service/product.service");
 const { validationResult } = require("express-validator");
 
@@ -64,7 +65,25 @@ const getProduct = async (req, res) => {
   }
 };
 
+const getProductById = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    let rs = await getProductByIdService(id);
+    return res.status(200).json({
+      DT: rs,
+      EM: "Get product by id successfully",
+    });
+  } catch (error) {
+    return res.status(400).json({
+      DT: null,
+      EM: error.message,
+    });
+  }
+};
+
 module.exports = {
   postCreateProduct,
   getProduct,
+  getProductById,
 };

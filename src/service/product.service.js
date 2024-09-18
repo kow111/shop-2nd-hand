@@ -64,7 +64,17 @@ const getProductService = async (filter = {}) => {
   }
 };
 
+const getProductByIdService = async (id) => {
+  try {
+    let rs = await Product.findById(id);
+    return rs;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
 module.exports = {
   createProductService,
   getProductService,
+  getProductByIdService,
 };
