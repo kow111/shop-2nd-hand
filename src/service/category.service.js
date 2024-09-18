@@ -9,6 +9,16 @@ const createCategoryService = async (data) => {
   }
 };
 
+const getCategoryService = async () => {
+  try {
+    const rs = await Category.find();
+    return rs;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
 module.exports = {
   createCategoryService,
+  getCategoryService,
 };
