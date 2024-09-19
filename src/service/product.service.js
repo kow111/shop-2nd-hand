@@ -28,7 +28,7 @@ const createProductService = async (data) => {
 
 const getProductService = async (filter = {}) => {
   try {
-    const limit = 2;
+    const limit = 10;
     let skip = 0;
     const query = {};
     if (filter.search) {
