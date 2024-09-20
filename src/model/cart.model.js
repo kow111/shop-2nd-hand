@@ -44,20 +44,15 @@ cartSchema.pre("findOneAndUpdate", async function (next) {
   try {
     const update = this.getUpdate();
     const query = this.getQuery();
-    if (update && update.$inc && update.$inc["items.$.quantity"]) {
-      const quantityChange = update.$inc["items.$.quantity"];
+    if (update && update["items.$.quantity"]) {
+      const quantityChange = update["items.$.quantity"];
       const productId = query["items.product"];
-
-      const cart = await Cart.findOne(query);
-      const item = cart.items.find((i) => i.product.toString() === productId);
-
-      const newQuantity = item.quantity + quantityChange;
 
       const product = await Product.findById(productId);
       if (!product) {
         throw new Error("Product not found.");
       }
-      const newPrice = product.price * newQuantity;
+      const newPrice = product.price * quantityChange;
 
       update.$set = update.$set || {};
       update.$set["items.$.price"] = newPrice;

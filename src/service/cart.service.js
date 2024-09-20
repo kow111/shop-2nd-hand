@@ -2,7 +2,7 @@ const Cart = require("../model/cart.model");
 
 const getCartItemService = async (userId) => {
   try {
-    const rs = await Cart.find({ user: userId });
+    const rs = await Cart.findOne({ user: userId }).populate("items.product");
     return rs;
   } catch (error) {
     throw new Error(error.message);
@@ -37,7 +37,7 @@ const updateCartItemService = async (userId, data) => {
     } else {
       let rs = await Cart.findOneAndUpdate(
         { user: userId, "items.product": data.productId },
-        { $inc: { "items.$.quantity": data.quantity } },
+        { "items.$.quantity": data.quantity },
         { new: true }
       );
       return rs;
