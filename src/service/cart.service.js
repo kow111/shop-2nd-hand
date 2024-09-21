@@ -30,17 +30,25 @@ const updateCartItemService = async (userId, data) => {
       let rs = await cart.save();
       return rs;
     } else if (!isProductInCart) {
-      let cart = await Cart.findOne({ user: userId });
-      cart.items.push({ product: data.productId, quantity: data.quantity });
-      let rs = await cart.save({ new: true });
-      return rs;
+      if (data.quantity) {
+        let cart = await Cart.findOne({ user: userId });
+        cart.items.push({ product: data.productId, quantity: data.quantity });
+        let rs = await cart.save({ new: true });
+        return rs;
+      } else {
+        throw new Error("Quantity is required.");
+      }
     } else {
-      let rs = await Cart.findOneAndUpdate(
-        { user: userId, "items.product": data.productId },
-        { "items.$.quantity": data.quantity },
-        { new: true }
-      );
-      return rs;
+      if (data.quantity) {
+        let rs = await Cart.findOneAndUpdate(
+          { user: userId, "items.product": data.productId },
+          { "items.$.quantity": data.quantity },
+          { new: true }
+        );
+        return rs;
+      } else {
+        throw new Error("Quantity is required.");
+      }
     }
   } catch (error) {
     throw new Error(error.message);
