@@ -1,7 +1,7 @@
 const {
   createCategoryService,
   getCategoryService,
-  putUpdateCategoryService,
+  updateCategoryService,
 } = require("../service/category.service");
 
 const postCreateCategory = async (req, res) => {
