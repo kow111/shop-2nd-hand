@@ -1,4 +1,7 @@
-const { createOrderService } = require("../service/order.service");
+const {
+  createOrderService,
+  cancelOrderService,
+} = require("../service/order.service");
 
 const postCreateOrder = async (req, res) => {
   try {
@@ -23,6 +26,25 @@ const postCreateOrder = async (req, res) => {
     });
   }
 };
+
+const putCancelOrder = async (req, res) => {
+  try {
+    const { orderId } = req.params;
+    const userId = req.user.userId;
+    let rs = await cancelOrderService(orderId, userId);
+    return res.status(200).json({
+      DT: rs,
+      EM: "Cancel order successfully",
+    });
+  } catch (error) {
+    return res.status(400).json({
+      DT: null,
+      EM: error.message,
+    });
+  }
+};
+
 module.exports = {
   postCreateOrder,
+  putCancelOrder,
 };
