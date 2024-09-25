@@ -44,7 +44,25 @@ const putCancelOrder = async (req, res) => {
   }
 };
 
+const putChangeOrderStatus = async (req, res) => {
+  try {
+    const { orderId } = req.params;
+    const { status } = req.body;
+    let rs = await changeOrderStatusService(orderId, status);
+    return res.status(200).json({
+      DT: rs,
+      EM: "Change order status successfully",
+    });
+  } catch (error) {
+    return res.status(400).json({
+      DT: null,
+      EM: error.message,
+    });
+  }
+};
+
 module.exports = {
   postCreateOrder,
   putCancelOrder,
+  putChangeOrderStatus,
 };

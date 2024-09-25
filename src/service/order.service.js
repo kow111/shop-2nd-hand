@@ -1,5 +1,6 @@
 const Order = require("../model/order.model");
 const Product = require("../model/product.model");
+const { addNotificationJob } = require("./queue.service");
 
 const createOrderService = async (data) => {
   try {
@@ -61,7 +62,27 @@ const cancelOrderService = async (orderId, userId) => {
   }
 };
 
+const changeOrderStatusService = async (orderId, status) => {
+  try {
+    let order = await Order.findById(orderId);
+    if (!order) {
+      throw new Error("Order not found");
+    }
+    order.status = status;
+    await order.save();
+    addNotificationJob({
+      userId: order.user,
+      orderId: order._id,
+      newStatus: status,
+    });
+    return order;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
 module.exports = {
   createOrderService,
   cancelOrderService,
+  changeOrderStatusService,
 };
