@@ -1,4 +1,5 @@
 const Queue = require("bull");
+const { sendNotificationService } = require("./notification.service");
 
 const notificationQueue = new Queue("notificationQueue", {
   redis: {
@@ -10,10 +11,11 @@ const notificationQueue = new Queue("notificationQueue", {
 notificationQueue.process(async (job) => {
   const { userId, orderId, newStatus } = job.data;
 
-  sendNotificationToUser(
-    userId,
-    `Đơn hàng ${orderId} đã thay đổi trạng thái thành ${newStatus}`
-  );
+  sendNotificationService({
+    user: userId,
+    order: orderId,
+    message: `Đơn hàng ${orderId} đã thay đổi trạng thái thành ${newStatus}`,
+  });
 });
 
 const addNotificationJob = (jobData) => {
