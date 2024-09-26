@@ -4,7 +4,15 @@ const { addNotificationJob } = require("../queues/notification.queue");
 
 const createOrderService = async (data) => {
   try {
-    const { userId, products, totalAmount, paymentMethod, name, phone, address } = data;
+    const {
+      userId,
+      products,
+      totalAmount,
+      paymentMethod,
+      name,
+      phone,
+      address,
+    } = data;
     for (const item of products) {
       const product = await Product.findById(item.productId);
 
@@ -83,8 +91,18 @@ const changeOrderStatusService = async (orderId, status) => {
   }
 };
 
+const getOrderByUserService = async (userId) => {
+  try {
+    let orders = await Order.find({ user: userId });
+    return orders;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
 module.exports = {
   createOrderService,
   cancelOrderService,
   changeOrderStatusService,
+  getOrderByUserService,
 };

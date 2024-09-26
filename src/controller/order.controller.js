@@ -3,11 +3,13 @@ const {
   createOrderService,
   cancelOrderService,
   changeOrderStatusService,
+  getOrderByUserService,
 } = require("../service/order.service");
 
 const postCreateOrder = async (req, res) => {
   try {
-    const { products, totalAmount, paymentMethod, name, phone, address } = req.body;
+    const { products, totalAmount, paymentMethod, name, phone, address } =
+      req.body;
     const userId = req.user.userId;
     let data = {
       userId,
@@ -68,8 +70,25 @@ const putChangeOrderStatus = async (req, res) => {
   }
 };
 
+const getOrderByUser = async (req, res) => {
+  try {
+    const userId = req.user.userId;
+    let rs = await getOrderByUserService(userId);
+    return res.status(200).json({
+      DT: rs,
+      EM: "Get order by user successfully",
+    });
+  } catch (error) {
+    return res.status(400).json({
+      DT: null,
+      EM: error.message,
+    });
+  }
+};
+
 module.exports = {
   postCreateOrder,
   putCancelOrder,
   putChangeOrderStatus,
+  getOrderByUser,
 };
