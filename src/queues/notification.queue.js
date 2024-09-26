@@ -1,11 +1,9 @@
 const Queue = require("bull");
-const { sendNotificationService } = require("./notification.service");
+const { sendNotificationService } = require("../service/notification.service");
+const redisConfig = require("../config/redis.config");
 
 const notificationQueue = new Queue("notificationQueue", {
-  redis: {
-    host: "127.0.0.1",
-    port: 6379,
-  },
+  redis: redisConfig,
 });
 
 notificationQueue.process(async (job) => {
@@ -24,5 +22,4 @@ const addNotificationJob = (jobData) => {
 
 module.exports = {
   addNotificationJob,
-  notificationQueue,
 };

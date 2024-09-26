@@ -1,6 +1,6 @@
 const Order = require("../model/order.model");
 const Product = require("../model/product.model");
-const { addNotificationJob } = require("./queue.service");
+const { addNotificationJob } = require("../queues/notification.queue");
 
 const createOrderService = async (data) => {
   try {

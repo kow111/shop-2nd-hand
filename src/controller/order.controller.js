@@ -1,6 +1,8 @@
+const { addChangeOrderStatusJob } = require("../queues/order.queue");
 const {
   createOrderService,
   cancelOrderService,
+  changeOrderStatusService,
 } = require("../service/order.service");
 
 const postCreateOrder = async (req, res) => {
@@ -17,6 +19,9 @@ const postCreateOrder = async (req, res) => {
       address,
     };
     let rs = await createOrderService(data);
+    addChangeOrderStatusJob({
+      orderId: rs._id,
+    });
     return res.status(200).json({
       DT: rs,
       EM: "Create order successfully",
