@@ -5,13 +5,15 @@ const {
 
 const postCreateOrder = async (req, res) => {
   try {
-    const { products, totalAmount, paymentMethod, address } = req.body;
+    const { products, totalAmount, paymentMethod, name, phone, address } = req.body;
     const userId = req.user.userId;
     let data = {
       userId,
       products,
       totalAmount,
       paymentMethod,
+      name,
+      phone,
       address,
     };
     let rs = await createOrderService(data);

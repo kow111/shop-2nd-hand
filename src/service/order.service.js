@@ -4,7 +4,7 @@ const { addNotificationJob } = require("./queue.service");
 
 const createOrderService = async (data) => {
   try {
-    const { userId, products, totalAmount, paymentMethod, address } = data;
+    const { userId, products, totalAmount, paymentMethod, name, phone, address } = data;
     for (const item of products) {
       const product = await Product.findById(item.productId);
 
@@ -26,6 +26,8 @@ const createOrderService = async (data) => {
       })),
       totalAmount,
       paymentMethod,
+      name,
+      phone,
       address,
     });
     return rs;
