@@ -5,7 +5,7 @@ const auth = (req, res, next) => {
   if (!authHeader) {
     return res
       .status(401)
-      .json({ DT: null, EM: "Access denied. No token provided." });
+      .json({ EC: -999, DT: null, EM: "Access denied. No token provided." });
   }
   const token = authHeader.startsWith("Bearer ")
     ? authHeader.replace("Bearer ", "")
@@ -14,7 +14,7 @@ const auth = (req, res, next) => {
   if (!token) {
     return res
       .status(401)
-      .json({ DT: null, EM: "Access denied. No token provided." });
+      .json({ EC: -999, DT: null, EM: "Access denied. No token provided." });
   }
 
   try {
@@ -22,14 +22,16 @@ const auth = (req, res, next) => {
     req.user = decoded;
     next();
   } catch (error) {
-    res.status(400).json({ DT: null, EM: "Invalid token." });
+    res.status(400).json({ EC: -999, DT: null, EM: "Invalid token." });
   }
 };
 const requireAdmin = (req, res, next) => {
   if (req.user && req.user.role === "ADMIN") {
     next();
   } else {
-    res.status(403).json({ DT: null, EM: "Access denied. Admins only." });
+    res
+      .status(403)
+      .json({ EC: -999, DT: null, EM: "Access denied. Admins only." });
   }
 };
 
