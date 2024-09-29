@@ -93,7 +93,9 @@ const changeOrderStatusService = async (orderId, status) => {
 
 const getOrderByUserService = async (userId) => {
   try {
-    let orders = await Order.find({ user: userId });
+    let orders = await Order.find({ user: userId }).populate(
+      "products.product"
+    );
     return orders;
   } catch (error) {
     throw new Error(error.message);
