@@ -4,6 +4,7 @@ const {
   cancelOrderService,
   changeOrderStatusService,
   getOrderByUserService,
+  getOrderByIdService,
 } = require("../service/order.service");
 
 const postCreateOrder = async (req, res) => {
@@ -86,9 +87,26 @@ const getOrderByUser = async (req, res) => {
   }
 };
 
+const getOrderById = async (req, res) => {
+  try {
+    const { orderId } = req.params;
+    let rs = await getOrderByIdService(orderId);
+    return res.status(200).json({
+      DT: rs,
+      EM: "Get order by id successfully",
+    });
+  } catch (error) {
+    return res.status(400).json({
+      DT: null,
+      EM: error.message,
+    });
+  }
+};
+
 module.exports = {
   postCreateOrder,
   putCancelOrder,
   putChangeOrderStatus,
   getOrderByUser,
+  getOrderById,
 };

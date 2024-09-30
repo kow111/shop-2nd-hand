@@ -102,9 +102,19 @@ const getOrderByUserService = async (userId) => {
   }
 };
 
+const getOrderByIdService = async (orderId) => {
+  try {
+    let order = await Order.findById(orderId).populate("products.product");
+    return order;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
 module.exports = {
   createOrderService,
   cancelOrderService,
   changeOrderStatusService,
   getOrderByUserService,
+  getOrderByIdService,
 };
