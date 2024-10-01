@@ -1,4 +1,5 @@
 const Product = require("../model/product.model");
+const mongoose = require("mongoose");
 
 const createProductService = async (data) => {
   try {
@@ -41,6 +42,12 @@ const getProductService = async (filter = {}) => {
     if (filter.page) {
       skip = (filter.page - 1) * limit;
     }
+    if (filter.category) {
+      query.category = {
+        $in: filter.category.split(",")
+      };
+      // console.log(query);
+    }
     let sort = {};
     if (filter.sortOrder === "1") {
       sort.price = 1;
@@ -56,7 +63,8 @@ const getProductService = async (filter = {}) => {
     const products = await Product.find(query)
       .limit(limit)
       .skip(skip)
-      .sort(sort);
+      .sort(sort)
+      .populate("category", "name")
     return {
       products,
       totalPages,
