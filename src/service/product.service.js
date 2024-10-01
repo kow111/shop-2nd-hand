@@ -42,11 +42,13 @@ const getProductService = async (filter = {}) => {
       skip = (filter.page - 1) * limit;
     }
     let sort = {};
-    if (filter.sortOrder === "asc") {
+    if (filter.sortOrder === "1") {
       sort.price = 1;
-    } else if (filter.sortOrder === "desc") {
+    } else if (filter.sortOrder === "2") {
       sort.price = -1;
     }
+
+    sort._id = 1;
 
     const totalItems = await Product.countDocuments(query);
     const totalPages = Math.ceil(totalItems / limit);
