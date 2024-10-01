@@ -13,6 +13,17 @@ const sendNotificationService = async (data) => {
     throw new Error(error.message);
   }
 };
+
+const getNotificationService = async (userId) => {
+  try {
+    let rs = await Notification.find({ user: userId });
+    return rs;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
 module.exports = {
   sendNotificationService,
+  getNotificationService,
 };
