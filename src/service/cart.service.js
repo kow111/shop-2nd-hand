@@ -1,4 +1,5 @@
 const Cart = require("../model/cart.model");
+const Product = require("../model/product.model");
 
 const getCartItemService = async (userId) => {
   try {
@@ -12,48 +13,57 @@ const getCartItemService = async (userId) => {
 const updateCartItemService = async (userId, data) => {
   try {
     const cart = await Cart.findOne({ user: userId });
+    if (!cart) throw new Error("Cart not found for this user.");
 
-    if (!cart) {
-      throw new Error("Cart not found for this user.");
+    const product = await Product.findById(data.productId);
+    if (data.quantity > product.quantity) {
+      throw new Error(
+        `The quantity of product ${product.productName} is not enough. The current quantity is ${product.quantity}.`
+      );
     }
 
-    const isProductInCart = cart.items.find(
+    if (data.deleteProduct && data.deleteProduct.length > 0) {
+      return await removeProductsFromCart(cart, data.deleteProduct);
+    }
+
+    const isProductInCart = cart.items.some(
       (item) => item.product.toString() === data.productId
     );
 
-    if (data.deleteProduct && data.deleteProduct.length > 0) {
-      for (let productId of data.deleteProduct) {
-        cart.items = cart.items.filter(
-          (item) => item.product.toString() !== productId
-        );
-      }
-      let rs = await cart.save();
-      return rs;
-    } else if (!isProductInCart) {
-      if (data.quantity) {
-        let cart = await Cart.findOne({ user: userId });
-        cart.items.push({ product: data.productId, quantity: data.quantity });
-        let rs = await cart.save({ new: true });
-        return rs;
-      } else {
-        throw new Error("Quantity is required.");
-      }
+    if (!isProductInCart) {
+      return await addProductToCart(cart, data);
     } else {
-      if (data.quantity) {
-        let rs = await Cart.findOneAndUpdate(
-          { user: userId, "items.product": data.productId },
-          { "items.$.quantity": data.quantity },
-          { new: true }
-        );
-        return rs;
-      } else {
-        throw new Error("Quantity is required.");
-      }
+      return await updateProductQuantityInCart(userId, data);
     }
   } catch (error) {
     throw new Error(error.message);
   }
 };
+
+const removeProductsFromCart = async (cart, productsToDelete) => {
+  cart.items = cart.items.filter(
+    (item) => !productsToDelete.includes(item.product.toString())
+  );
+  return await cart.save();
+};
+
+const addProductToCart = async (cart, data) => {
+  if (!data.quantity) throw new Error("Quantity is required.");
+
+  cart.items.push({ product: data.productId, quantity: data.quantity });
+  return await cart.save({ new: true });
+};
+
+const updateProductQuantityInCart = async (userId, data) => {
+  if (!data.quantity) throw new Error("Quantity is required.");
+
+  return await Cart.findOneAndUpdate(
+    { user: userId, "items.product": data.productId },
+    { "items.$.quantity": data.quantity },
+    { new: true }
+  );
+};
+
 module.exports = {
   getCartItemService,
   updateCartItemService,
