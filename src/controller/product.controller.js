@@ -87,26 +87,18 @@ const getProductById = async (req, res) => {
 const putUpdateProduct = async (req, res) => {
   try {
     const { id } = req.params;
-    const {
-      productName,
-      description,
-      size,
-      category,
-      quantity,
-      images,
-      price,
-    } = req.body;
+    const { productName, description, size, category, quantity, price } =
+      req.body;
     let data = {
       productName,
       description,
       size,
       category,
       quantity,
-      images,
       price,
     };
-
-    let rs = await updateProductService(id, data);
+    let { actions } = req.body;
+    let rs = await updateProductService(id, data, actions);
     return res.status(200).json({
       DT: rs,
       EM: "Update product successfully",

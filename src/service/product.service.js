@@ -44,7 +44,7 @@ const getProductService = async (filter = {}) => {
     }
     if (filter.category) {
       query.category = {
-        $in: filter.category.split(",")
+        $in: filter.category.split(","),
       };
       // console.log(query);
     }
@@ -64,7 +64,7 @@ const getProductService = async (filter = {}) => {
       .limit(limit)
       .skip(skip)
       .sort(sort)
-      .populate("category", "name")
+      .populate("category", "name");
     return {
       products,
       totalPages,
@@ -83,10 +83,47 @@ const getProductByIdService = async (id) => {
   }
 };
 
-const updateProductService = async (id, data) => {
+const updateProductService = async (id, data, imageActions) => {
   try {
-    let rs = await Product.findByIdAndUpdate(id, data);
-    return rs;
+    let product = await Product.findById(id);
+
+    if (!product) {
+      throw new Error("Product not found");
+    }
+
+    if (data) {
+      if (data.productName) product.productName = data.productName;
+      if (data.description) product.description = data.description;
+      if (data.size) product.size = data.size;
+      if (data.category) product.category = data.category;
+      if (data.quantity) product.quantity = data.quantity;
+      if (data.price) product.price = data.price;
+    }
+    if (imageActions && imageActions.length > 0) {
+      imageActions.forEach((actionObj) => {
+        const { action, url, oldUrl, newUrl } = actionObj;
+        switch (action) {
+          case "add":
+            product.images.push(url);
+            break;
+          case "delete":
+            product.images = product.images.filter((image) => image !== url);
+            break;
+          case "replace":
+            const index = product.images.indexOf(oldUrl);
+            if (index !== -1) {
+              product.images[index] = newUrl;
+            }
+            break;
+          default:
+            throw new Error("Invalid action");
+        }
+      });
+    }
+
+    let updatedProduct = await product.save();
+
+    return updatedProduct;
   } catch (error) {
     throw new Error(error.message);
   }
