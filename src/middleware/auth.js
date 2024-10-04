@@ -26,7 +26,7 @@ const auth = (req, res, next) => {
   }
 };
 const requireAdmin = (req, res, next) => {
-  if (req.user && req.user.role === "ADMIN") {
+  if (req.user && req.user.is_admin === true) {
     next();
   } else {
     res

@@ -9,11 +9,7 @@ const discountSchema = new mongoose.Schema({
     type: Number,
     default: null,
   },
-  usedCount: {
-    type: Number,
-    default: 0,
-  },
-  user: [
+  usersUsed: [
     {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",

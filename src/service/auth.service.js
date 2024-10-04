@@ -34,7 +34,7 @@ const loginService = async (data) => {
       throw new Error("Password is incorrect");
     }
     const token = jwt.sign(
-      { userId: user._id, email: user.email },
+      { userId: user._id, email: user.email, is_admin: user.is_admin },
       process.env.JWT_SECRET,
       {
         expiresIn: "1h", // Thời gian hết hạn của token
