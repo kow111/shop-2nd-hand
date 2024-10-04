@@ -12,6 +12,7 @@ const userRoute = require("./route/user.route");
 const cartRoute = require("./route/cart.route");
 const orderRoute = require("./route/order.route");
 const notificationRoute = require("./route/notification.route");
+const reviewRoute = require("./route/review.route");
 
 const app = express();
 app.use(cors());
@@ -25,6 +26,7 @@ app.use("/api/v1/category", categoryRoute);
 app.use("/api/v1/cart", cartRoute);
 app.use("/api/v1/order", orderRoute);
 app.use("/api/v1/notification", notificationRoute);
+app.use("/api/v1/review", reviewRoute);
 
 app.use("/api/v1/user", userRoute);
 const PORT = process.env.PORT || 3000;

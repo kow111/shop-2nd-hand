@@ -111,10 +111,35 @@ const getOrderByIdService = async (orderId) => {
   }
 };
 
+const getProductUserPurchasedService = async (userId) => {
+  try {
+    let orders = await Order.find({
+      user: userId,
+      status: "DELIVERED",
+    }).populate("products.product");
+
+    const productSet = new Set();
+    const products = [];
+
+    orders.forEach((order) => {
+      order.products.forEach((item) => {
+        if (!productSet.has(item.product._id.toString())) {
+          productSet.add(item.product._id.toString());
+          products.push(item.product);
+        }
+      });
+    });
+    return products;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
 module.exports = {
   createOrderService,
   cancelOrderService,
   changeOrderStatusService,
   getOrderByUserService,
   getOrderByIdService,
+  getProductUserPurchasedService,
 };

@@ -5,6 +5,7 @@ const {
   changeOrderStatusService,
   getOrderByUserService,
   getOrderByIdService,
+  getProductUserPurchasedService,
 } = require("../service/order.service");
 
 const postCreateOrder = async (req, res) => {
@@ -103,10 +104,27 @@ const getOrderById = async (req, res) => {
   }
 };
 
+const getProductUserPurchased = async (req, res) => {
+  try {
+    const userId = req.user.userId;
+    let rs = await getProductUserPurchasedService(userId);
+    return res.status(200).json({
+      DT: rs,
+      EM: "Get product user purchased successfully",
+    });
+  } catch (error) {
+    return res.status(400).json({
+      DT: null,
+      EM: error.message,
+    });
+  }
+};
+
 module.exports = {
   postCreateOrder,
   putCancelOrder,
   putChangeOrderStatus,
   getOrderByUser,
   getOrderById,
+  getProductUserPurchased,
 };

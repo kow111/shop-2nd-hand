@@ -1,4 +1,13 @@
-import Review from "../model/review.model";
+const Review = require("../model/review.model");
+
+const getReviewByProductService = async (productId) => {
+  try {
+    let rs = await Review.find({ product: productId }).populate("user");
+    return rs;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
 
 const createReviewService = async (review) => {
   try {
@@ -9,4 +18,4 @@ const createReviewService = async (review) => {
   }
 };
 
-export { createReviewService };
+module.exports = { createReviewService, getReviewByProductService };
