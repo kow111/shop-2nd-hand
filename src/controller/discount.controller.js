@@ -2,6 +2,7 @@ const {
   addDiscountSerivce,
   applyDiscountService,
   getDiscountService,
+  getDiscountByCodeService,
 } = require("../service/discount.service");
 
 const postCreateDiscount = async (req, res) => {
@@ -44,6 +45,23 @@ const getApplyDiscount = async (req, res) => {
   }
 };
 
+const getDiscountByCode = async (req, res) => {
+  try {
+    const { discountCode } = req.query;
+    const userId = req.user.userId;
+    let rs = await getDiscountByCodeService(discountCode, userId);
+    return res.status(200).json({
+      DT: rs,
+      EM: "Get discount by code successfully",
+    });
+  } catch (error) {
+    return res.status(400).json({
+      DT: null,
+      EM: error.message,
+    });
+  }
+};
+
 const getDiscount = async (req, res) => {
   try {
     const { page } = req.query;
@@ -64,4 +82,5 @@ module.exports = {
   postCreateDiscount,
   getApplyDiscount,
   getDiscount,
+  getDiscountByCode,
 };

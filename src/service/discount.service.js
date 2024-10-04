@@ -37,6 +37,32 @@ const applyDiscountService = async (discountCode, userId) => {
   }
 };
 
+const getDiscountByCodeService = async (discountCode, userId) => {
+  try {
+    const discount = await Discount.findOne({
+      discountCode: discountCode,
+    });
+    if (!discount) {
+      throw new Error("Discount code is not valid");
+    }
+    if (discount.usersUsed.includes(userId)) {
+      throw new Error("Discount code has been used");
+    }
+    if (discount.expiredAt < new Date()) {
+      throw new Error("Discount code is expired");
+    }
+    if (
+      discount.usageLimit &&
+      discount.usersUsed.length >= discount.usageLimit
+    ) {
+      throw new Error("Discount code is out of usage");
+    }
+    return discount.discountPercentage;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
 const getDiscountService = async (filter = {}) => {
   try {
     const limit = 10;
@@ -55,4 +81,5 @@ module.exports = {
   addDiscountSerivce,
   applyDiscountService,
   getDiscountService,
+  getDiscountByCodeService,
 };

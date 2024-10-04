@@ -1,8 +1,13 @@
 const Order = require("../model/order.model");
 const Product = require("../model/product.model");
 const { addNotificationJob } = require("../queues/notification.queue");
+const { applyDiscountService } = require("./discount.service");
+const mongoose = require("mongoose");
 
 const createOrderService = async (data) => {
+  const session = await mongoose.startSession(); // Khởi tạo session
+  session.startTransaction();
+
   try {
     const {
       userId,
@@ -12,9 +17,12 @@ const createOrderService = async (data) => {
       name,
       phone,
       address,
+      discountCode,
     } = data;
+
+    // Kiểm tra và cập nhật số lượng sản phẩm
     for (const item of products) {
-      const product = await Product.findById(item.productId);
+      const product = await Product.findById(item.productId).session(session);
 
       if (!product || product.quantity < item.quantity) {
         throw new Error(
@@ -23,24 +31,41 @@ const createOrderService = async (data) => {
       }
 
       product.quantity -= item.quantity;
-
-      await product.save();
+      await product.save({ session });
     }
-    let rs = await Order.create({
-      user: userId,
-      products: products.map((item) => ({
-        product: item.productId,
-        quantity: item.quantity,
-      })),
-      totalAmount,
-      paymentMethod,
-      name,
-      phone,
-      address,
-    });
-    return rs;
+
+    // Áp dụng mã giảm giá nếu có
+    if (discountCode) {
+      await applyDiscountService(discountCode, userId);
+    }
+
+    // Tạo đơn hàng trong session
+    const order = await Order.create(
+      [
+        {
+          user: userId,
+          products: products.map((item) => ({
+            product: item.productId,
+            quantity: item.quantity,
+          })),
+          totalAmount,
+          paymentMethod,
+          discountCode,
+          name,
+          phone,
+          address,
+        },
+      ],
+      { session }
+    );
+
+    await session.commitTransaction();
+    return order[0];
   } catch (error) {
+    await session.abortTransaction();
     throw new Error(error.message);
+  } finally {
+    session.endSession();
   }
 };
 

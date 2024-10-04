@@ -10,8 +10,15 @@ const {
 
 const postCreateOrder = async (req, res) => {
   try {
-    const { products, totalAmount, paymentMethod, name, phone, address } =
-      req.body;
+    const {
+      products,
+      totalAmount,
+      paymentMethod,
+      name,
+      phone,
+      address,
+      discountCode,
+    } = req.body;
     const userId = req.user.userId;
     let data = {
       userId,
@@ -21,6 +28,7 @@ const postCreateOrder = async (req, res) => {
       name,
       phone,
       address,
+      discountCode,
     };
     let rs = await createOrderService(data);
     addChangeOrderStatusJob({
