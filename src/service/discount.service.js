@@ -20,7 +20,7 @@ const applyDiscountService = async (discountCode, userId) => {
     if (discount.usersUsed.includes(userId)) {
       throw new Error("Discount code has been used");
     }
-    if (discount.expiredAt < new Date()) {
+    if (discount.expiredAt && discount.expiredAt < new Date()) {
       throw new Error("Discount code is expired");
     }
     if (
@@ -48,7 +48,7 @@ const getDiscountByCodeService = async (discountCode, userId) => {
     if (discount.usersUsed.includes(userId)) {
       throw new Error("Discount code has been used");
     }
-    if (discount.expiredAt < new Date()) {
+    if (discount.expiredAt && discount.expiredAt < new Date()) {
       throw new Error("Discount code is expired");
     }
     if (
@@ -70,8 +70,15 @@ const getDiscountService = async (filter = {}) => {
     if (filter.page) {
       skip = (filter.page - 1) * limit;
     }
+
+    const totalItems = await Discount.countDocuments();
+    const totalPages = Math.ceil(totalItems / limit);
+
     let rs = await Discount.find().skip(skip).limit(limit);
-    return rs;
+    return {
+      discounts: rs,
+      totalPages,
+    };
   } catch (error) {
     throw new Error(error.message);
   }
