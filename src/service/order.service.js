@@ -1,3 +1,4 @@
+const Discount = require("../model/discount.model");
 const Order = require("../model/order.model");
 const Product = require("../model/product.model");
 const { addNotificationJob } = require("../queues/notification.queue");
@@ -90,6 +91,17 @@ const cancelOrderService = async (orderId, userId) => {
       }
     }
     order.status = "CANCELLED";
+    if (order.discountCode) {
+      const discount = await Discount.findOne({
+        discountCode: order.discountCode,
+      });
+      if (discount) {
+        discount.usersUsed = discount.usersUsed.filter(
+          (user) => user.toString() !== userId
+        );
+        await discount.save();
+      }
+    }
     await order.save();
     return order;
   } catch (error) {
