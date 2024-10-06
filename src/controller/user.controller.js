@@ -1,6 +1,8 @@
 const {
   updateUserService,
   getUserByIdService,
+  getUserService,
+  updateUserAdminService,
 } = require("../service/user.service");
 
 const putUpdateUser = async (req, res) => {
@@ -37,7 +39,42 @@ const getUserByIdUser = async (req, res) => {
   }
 };
 
+const getUser = async (req, res) => {
+  try {
+    const { page } = req.query;
+    const rs = await getUserService({ page });
+    return res.status(200).json({
+      DT: rs,
+      EM: null,
+    });
+  } catch (error) {
+    return res.status(400).json({
+      DT: null,
+      EM: error.message,
+    });
+  }
+};
+
+const putUpdateUserAdmin = async (req, res) => {
+  try {
+    const userId = req.params.userId;
+    const data = req.body;
+    await updateUserAdminService(userId, data);
+    return res.status(200).json({
+      DT: null,
+      EM: "Update user successfully",
+    });
+  } catch (error) {
+    return res.status(400).json({
+      DT: null,
+      EM: error.message,
+    });
+  }
+};
+
 module.exports = {
   putUpdateUser,
   getUserByIdUser,
+  getUser,
+  putUpdateUserAdmin,
 };

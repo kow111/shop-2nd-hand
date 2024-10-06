@@ -1,4 +1,5 @@
 const User = require("../model/user.model");
+
 const updateUserService = async (userId, data) => {
   try {
     const { username, phone, gender, address, image } = data;
@@ -50,8 +51,43 @@ const getUserByIdService = async (userId) => {
   }
 };
 
+const getUserService = async (filter = {}) => {
+  try {
+    const limit = 10;
+    let skip = 0;
+    if (filter.page) {
+      skip = (filter.page - 1) * limit;
+    }
+
+    const totalItems = await User.countDocuments();
+    const totalPages = Math.ceil(totalItems / limit);
+
+    const users = await User.find().limit(limit).skip(skip);
+    return {
+      users,
+      totalPages,
+    };
+  } catch (err) {
+    throw new Error(err.message);
+  }
+};
+
+const updateUserAdminService = async (userId, data) => {
+  try {
+    const user = await User.findByIdAndUpdate({ _id: userId }, data);
+    if (!user) {
+      throw new Error("User not found");
+    }
+    return user;
+  } catch (err) {
+    throw new Error(err.message);
+  }
+};
+
 module.exports = {
   updateUserService,
   getUserByIdService,
   updateEmailService,
+  getUserService,
+  updateUserAdminService,
 };
