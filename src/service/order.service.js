@@ -172,6 +172,32 @@ const getProductUserPurchasedService = async (userId) => {
   }
 };
 
+const getOrderByAdminService = async (filter = {}) => {
+  try {
+    const limit = 10;
+    let skip = 0;
+    if (filter.page) {
+      skip = (filter.page - 1) * limit;
+    }
+
+    const totalItems = await Order.countDocuments();
+    const totalPages = Math.ceil(totalItems / limit);
+
+    let orders = await Order.find()
+      .populate("products.product")
+      .limit(limit)
+      .skip(skip)
+      .sort({ createdAt: -1 });
+
+    return {
+      orders,
+      totalPages,
+    };
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
 module.exports = {
   createOrderService,
   cancelOrderService,
@@ -179,4 +205,5 @@ module.exports = {
   getOrderByUserService,
   getOrderByIdService,
   getProductUserPurchasedService,
+  getOrderByAdminService,
 };

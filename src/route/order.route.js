@@ -1,5 +1,5 @@
 const express = require("express");
-const { auth } = require("../middleware/auth");
+const { auth, requireAdmin } = require("../middleware/auth");
 const {
   postCreateOrder,
   putCancelOrder,
@@ -7,11 +7,13 @@ const {
   getOrderByUser,
   getOrderById,
   getProductUserPurchased,
+  getOrderByAdmin,
 } = require("../controller/order.controller");
 const routerAPI = express.Router();
 
 routerAPI.get("/", auth, getOrderByUser);
 routerAPI.get("/product-purchased", auth, getProductUserPurchased);
+routerAPI.get("/admin", auth, requireAdmin, getOrderByAdmin);
 routerAPI.get("/:orderId", auth, getOrderById);
 routerAPI.post("/", auth, postCreateOrder);
 routerAPI.put("/cancel-order/:orderId", auth, putCancelOrder);

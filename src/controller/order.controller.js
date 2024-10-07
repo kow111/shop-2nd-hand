@@ -6,6 +6,7 @@ const {
   getOrderByUserService,
   getOrderByIdService,
   getProductUserPurchasedService,
+  getOrderByAdminService,
 } = require("../service/order.service");
 
 const postCreateOrder = async (req, res) => {
@@ -128,6 +129,22 @@ const getProductUserPurchased = async (req, res) => {
   }
 };
 
+const getOrderByAdmin = async (req, res) => {
+  try {
+    const { page } = req.query;
+    let rs = await getOrderByAdminService({ page });
+    return res.status(200).json({
+      DT: rs,
+      EM: "Get order by admin successfully",
+    });
+  } catch (error) {
+    return res.status(400).json({
+      DT: null,
+      EM: error.message,
+    });
+  }
+};
+
 module.exports = {
   postCreateOrder,
   putCancelOrder,
@@ -135,4 +152,5 @@ module.exports = {
   getOrderByUser,
   getOrderById,
   getProductUserPurchased,
+  getOrderByAdmin,
 };
