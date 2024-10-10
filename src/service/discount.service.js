@@ -31,7 +31,7 @@ const applyDiscountService = async (discountCode, userId) => {
     }
     discount.usersUsed.push(userId);
     await discount.save();
-    return discount.discountPercentage;
+    return discount;
   } catch (error) {
     throw new Error(error.message);
   }
@@ -57,7 +57,7 @@ const getDiscountByCodeService = async (discountCode, userId) => {
     ) {
       throw new Error("Discount code is out of usage");
     }
-    return discount.discountPercentage;
+    return discount;
   } catch (error) {
     throw new Error(error.message);
   }
