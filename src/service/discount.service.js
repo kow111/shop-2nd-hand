@@ -11,9 +11,7 @@ const addDiscountSerivce = async (discount) => {
 
 const applyDiscountService = async (discountCode, userId) => {
   try {
-    const discount = await Discount.findOne({
-      discountCode: discountCode,
-    });
+    const discount = await Discount.findById(discountCode);
     if (!discount) {
       throw new Error("Discount code is not valid");
     }

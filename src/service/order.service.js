@@ -92,9 +92,7 @@ const cancelOrderService = async (orderId, userId) => {
     }
     order.status = "CANCELLED";
     if (order.discountCode) {
-      const discount = await Discount.findOne({
-        discountCode: order.discountCode,
-      });
+      const discount = await Discount.findById(order.discountCode);
       if (discount) {
         discount.usersUsed = discount.usersUsed.filter(
           (user) => user.toString() !== userId
@@ -130,9 +128,9 @@ const changeOrderStatusService = async (orderId, status) => {
 
 const getOrderByUserService = async (userId) => {
   try {
-    let orders = await Order.find({ user: userId }).populate(
-      "products.product"
-    );
+    let orders = await Order.find({ user: userId })
+      .populate("products.product")
+      .populate("discountCode");
     return orders;
   } catch (error) {
     throw new Error(error.message);
@@ -141,7 +139,9 @@ const getOrderByUserService = async (userId) => {
 
 const getOrderByIdService = async (orderId) => {
   try {
-    let order = await Order.findById(orderId).populate("products.product");
+    let order = await Order.findById(orderId)
+      .populate("products.product")
+      .populate("discountCode");
     return order;
   } catch (error) {
     throw new Error(error.message);
@@ -185,6 +185,7 @@ const getOrderByAdminService = async (filter = {}) => {
 
     let orders = await Order.find()
       .populate("products.product")
+      .populate("discountCode")
       .limit(limit)
       .skip(skip)
       .sort({ createdAt: -1 });

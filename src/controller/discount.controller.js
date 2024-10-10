@@ -47,7 +47,7 @@ const getApplyDiscount = async (req, res) => {
 
 const getDiscountByCode = async (req, res) => {
   try {
-    const { discountCode } = req.body;
+    const { discountCode } = req.query;
     const userId = req.user.userId;
     let rs = await getDiscountByCodeService(discountCode, userId);
     return res.status(200).json({
