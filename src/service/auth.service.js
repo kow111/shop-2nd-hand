@@ -110,10 +110,27 @@ const resetPasswordService = async (data) => {
   }
 };
 
+const verifyPasswordService = async (data) => {
+  try {
+    const { email, password } = data;
+    const user = await User
+      .findOne({ email })
+      .select("password");
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      throw new Error("Password is incorrect");
+    }
+  }
+  catch (error) {
+    throw new Error(error.message);
+  }
+}
+
 module.exports = {
   signupService,
   loginService,
   sendOTPService,
   resetPasswordService,
   verifiedUserService,
+  verifyPasswordService,
 };

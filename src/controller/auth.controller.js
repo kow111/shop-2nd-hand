@@ -4,6 +4,7 @@ const {
   verifiedUserService,
   resetPasswordService,
   sendOTPService,
+  verifyPasswordService,
 } = require("../service/auth.service");
 const { validationResult } = require("express-validator");
 
@@ -112,10 +113,31 @@ const postResetPassword = async (req, res) => {
   }
 };
 
+const postVerifyPassword = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    let data = {
+      email,
+      password,
+    };
+    await verifyPasswordService(data);
+    return res.status(200).json({
+      DT: null,
+      EM: "Password is correct",
+    });
+  } catch (error) {
+    return res.status(400).json({
+      DT: null,
+      EM: error.message,
+    });
+  }
+};
+
 module.exports = {
   postSignupUser,
   postLoginUser,
   postSendOTP,
   postResetPassword,
   postVerifiedUser,
+  postVerifyPassword,
 };
