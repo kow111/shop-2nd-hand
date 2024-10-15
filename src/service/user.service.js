@@ -1,3 +1,5 @@
+const mongoose = require("mongoose");
+const Product = require("../model/product.model");
 const User = require("../model/user.model");
 
 const updateUserService = async (userId, data) => {
@@ -41,7 +43,7 @@ const updateEmailService = async (userId, data) => {
 
 const getUserByIdService = async (userId) => {
   try {
-    const user = await User.findById(userId);
+    const user = await User.findById(userId).populate("favourites");
     if (!user) {
       throw new Error("User not found");
     }
@@ -84,10 +86,39 @@ const updateUserAdminService = async (userId, data) => {
   }
 };
 
+const addFavouriteService = async (userId, productId) => {
+  try {
+    let product = await Product.findById(productId);
+    if (!product) {
+      throw new Error("Product not found");
+    }
+    let user = await User.findById(userId);
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    const productObjectId = new mongoose.Types.ObjectId(productId);
+
+    if (user.favourites.includes(productObjectId)) {
+      user.favourites = user.favourites.filter(
+        (id) => !id.equals(productObjectId)
+      );
+    } else {
+      user.favourites.push(productObjectId);
+    }
+
+    await user.save();
+    return user.favourites;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
 module.exports = {
   updateUserService,
   getUserByIdService,
   updateEmailService,
   getUserService,
   updateUserAdminService,
+  addFavouriteService,
 };

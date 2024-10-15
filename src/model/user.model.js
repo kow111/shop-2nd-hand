@@ -13,6 +13,7 @@ const userSchema = new mongoose.Schema({
   is_active: { type: Boolean, default: true },
   address: { type: String, default: "" },
   otp: { type: String, default: null },
+  favourites: [{ type: mongoose.Schema.Types.ObjectId, ref: "Product" }],
 });
 
 userSchema.post("save", async function (user) {
