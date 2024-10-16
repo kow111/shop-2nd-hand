@@ -7,8 +7,8 @@ const VNPAY_TMN_CODE = 'VI14NZI3';
 const VNPAY_HASH_SECRET = 'N43J8WMNSI55AYC71EEDMQ10IE0JDWE7';
 
 // Hàm tạo URL thanh toán
-const createPaymentService = (orderData) => {
-    const { amount } = orderData;
+const createPaymentService = (data) => {
+    const { amount } = data;
     // Thời gian hiện tại
     const date = new Date();
     orderId = date.toISOString().slice(0, 19).replace(/T/, '').replace(/:/g, '').replace(/-/g, '');
