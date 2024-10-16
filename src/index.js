@@ -14,6 +14,7 @@ const orderRoute = require("./route/order.route");
 const notificationRoute = require("./route/notification.route");
 const reviewRoute = require("./route/review.route");
 const discountRoute = require("./route/discount.route");
+const paymentRoute = require("./route/payment.route");
 
 const app = express();
 app.use(cors());
@@ -29,8 +30,10 @@ app.use("/api/v1/order", orderRoute);
 app.use("/api/v1/notification", notificationRoute);
 app.use("/api/v1/review", reviewRoute);
 app.use("/api/v1/discount", discountRoute);
-
 app.use("/api/v1/user", userRoute);
+app.use("/api/v1/payment", paymentRoute);
+
+
 const PORT = process.env.PORT || 3000;
 (async () => {
   try {
