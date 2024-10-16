@@ -8,10 +8,10 @@ const VNPAY_HASH_SECRET = 'N43J8WMNSI55AYC71EEDMQ10IE0JDWE7';
 
 // Hàm tạo URL thanh toán
 const createPaymentService = (orderData) => {
-    const { orderId, amount } = orderData;
+    const { amount } = orderData;
     // Thời gian hiện tại
     const date = new Date();
-
+    orderId = date.toISOString().slice(0, 19).replace(/T/, '').replace(/:/g, '').replace(/-/g, '');
     // Tạo dữ liệu thanh toán
     const vnp_Params = {
         vnp_Version: '2.0.0',
