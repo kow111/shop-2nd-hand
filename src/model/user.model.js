@@ -14,9 +14,12 @@ const userSchema = new mongoose.Schema({
   address: { type: String, default: "" },
   otp: { type: String, default: null },
   favourites: [{ type: mongoose.Schema.Types.ObjectId, ref: "Product" }],
+  discounts: [{ type: mongoose.Schema.Types.ObjectId, ref: "Discount" }],
 });
 
 userSchema.post("save", async function (user) {
+  const rs = await Cart.findOne({ user: user._id });
+  if (rs) return;
   await Cart.create({ user: user._id, items: [] });
 });
 

@@ -4,6 +4,7 @@ const {
   getUserService,
   updateUserAdminService,
   addFavouriteService,
+  addDiscountService,
 } = require("../service/user.service");
 
 const putUpdateUser = async (req, res) => {
@@ -90,10 +91,28 @@ const putUpdateFavorite = async (req, res) => {
   }
 };
 
+const putUpdateDiscount = async (req, res) => {
+  try {
+    const userId = req.user.userId;
+    const { discountCode } = req.body;
+    const rs = await addDiscountService(userId, discountCode);
+    return res.status(200).json({
+      DT: rs,
+      EM: "Add discount successfully",
+    });
+  } catch (error) {
+    return res.status(400).json({
+      DT: null,
+      EM: error.message,
+    });
+  }
+};
+
 module.exports = {
   putUpdateUser,
   getUserByIdUser,
   getUser,
   putUpdateUserAdmin,
   putUpdateFavorite,
+  putUpdateDiscount,
 };

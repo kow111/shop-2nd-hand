@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const Product = require("../model/product.model");
 const User = require("../model/user.model");
+const Discount = require("../model/discount.model");
 
 const updateUserService = async (userId, data) => {
   try {
@@ -43,7 +44,9 @@ const updateEmailService = async (userId, data) => {
 
 const getUserByIdService = async (userId) => {
   try {
-    const user = await User.findById(userId).populate("favourites");
+    const user = await User.findById(userId)
+      .populate("favourites")
+      .populate("discounts");
     if (!user) {
       throw new Error("User not found");
     }
@@ -114,6 +117,27 @@ const addFavouriteService = async (userId, productId) => {
   }
 };
 
+const addDiscountService = async (userId, discountId) => {
+  try {
+    let discount = await Discount.findById(discountId);
+    if (!discount) {
+      throw new Error("Discount not found");
+    }
+    let user = await User.findById(userId);
+    if (!user) {
+      throw new Error("User not found");
+    }
+    if (user.discounts.includes(discountId)) {
+      throw new Error("Discount code has been used");
+    }
+    user.discounts.push(discountId);
+    await user.save();
+    return user.discounts;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
 module.exports = {
   updateUserService,
   getUserByIdService,
@@ -121,4 +145,5 @@ module.exports = {
   getUserService,
   updateUserAdminService,
   addFavouriteService,
+  addDiscountService,
 };

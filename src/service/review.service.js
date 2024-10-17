@@ -1,4 +1,6 @@
 const Review = require("../model/review.model");
+const { getDiscountUserDontHaveService } = require("./discount.service");
+const { addDiscountService } = require("./user.service");
 
 const getReviewByProductService = async (productId) => {
   try {
@@ -12,7 +14,14 @@ const getReviewByProductService = async (productId) => {
 const createReviewService = async (review) => {
   try {
     let rs = await Review.create(review);
-    return rs;
+    const discount = await getDiscountUserDontHaveService(review.user);
+    if (discount) {
+      await addDiscountService(review.user, discount._id);
+    }
+    return {
+      review: rs,
+      discount,
+    };
   } catch (error) {
     throw new Error(error.message);
   }

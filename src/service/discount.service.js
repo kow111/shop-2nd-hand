@@ -1,4 +1,5 @@
 const Discount = require("../model/discount.model");
+const User = require("../model/user.model");
 
 const addDiscountSerivce = async (discount) => {
   try {
@@ -38,7 +39,7 @@ const applyDiscountService = async (discountCode, userId) => {
 const getDiscountByCodeService = async (discountCode, userId) => {
   try {
     const discount = await Discount.findOne({
-      discountCode: discountCode,
+      _id: discountCode,
     });
     if (!discount) {
       throw new Error("Discount code is not valid");
@@ -82,9 +83,34 @@ const getDiscountService = async (filter = {}) => {
   }
 };
 
+const getDiscountUserDontHaveService = async (userId) => {
+  try {
+    const userUsedDiscounts = await Discount.find({ usersUsed: userId });
+    const user = await User.findById(userId).select("discounts");
+    let availableDiscounts = await Discount.find({
+      _id: {
+        $nin: [...userUsedDiscounts.map((d) => d._id), ...user.discounts],
+      },
+      $or: [{ expiredAt: { $gt: new Date() } }, { expiredAt: null }],
+    });
+
+    availableDiscounts = availableDiscounts.filter((discount) => {
+      return (
+        discount.usageLimit === null ||
+        discount.usageLimit > discount.usersUsed.length
+      );
+    });
+
+    return availableDiscounts.length > 0 ? availableDiscounts[0] : null;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
 module.exports = {
   addDiscountSerivce,
   applyDiscountService,
   getDiscountService,
   getDiscountByCodeService,
+  getDiscountUserDontHaveService,
 };
