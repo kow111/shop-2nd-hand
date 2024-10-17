@@ -1,4 +1,5 @@
 const { addChangeOrderStatusJob } = require("../queues/order.queue");
+const { updateCartItemService } = require("../service/cart.service");
 const {
   createOrderService,
   cancelOrderService,
@@ -34,6 +35,9 @@ const postCreateOrder = async (req, res) => {
     let rs = await createOrderService(data);
     addChangeOrderStatusJob({
       orderId: rs._id,
+    });
+    await updateCartItemService(userId, {
+      deleteProduct: products.map((product) => product.productId),
     });
     return res.status(200).json({
       DT: rs,

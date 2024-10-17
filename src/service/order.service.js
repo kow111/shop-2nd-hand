@@ -10,7 +10,7 @@ const createOrderService = async (data) => {
   session.startTransaction();
 
   try {
-    const {
+    let {
       userId,
       products,
       totalAmount,
@@ -38,6 +38,8 @@ const createOrderService = async (data) => {
     // Áp dụng mã giảm giá nếu có
     if (discountCode) {
       await applyDiscountService(discountCode, userId);
+    } else {
+      discountCode = null;
     }
 
     // Tạo đơn hàng trong session

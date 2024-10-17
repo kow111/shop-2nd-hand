@@ -15,15 +15,15 @@ const updateCartItemService = async (userId, data) => {
     const cart = await Cart.findOne({ user: userId });
     if (!cart) throw new Error("Cart not found for this user.");
 
+    if (data.deleteProduct && data.deleteProduct.length > 0) {
+      return await removeProductsFromCart(cart, data.deleteProduct);
+    }
+
     const product = await Product.findById(data.productId);
     if (data.quantity > product.quantity) {
       throw new Error(
         `The quantity of product ${product.productName} is not enough. The current quantity is ${product.quantity}.`
       );
-    }
-
-    if (data.deleteProduct && data.deleteProduct.length > 0) {
-      return await removeProductsFromCart(cart, data.deleteProduct);
     }
 
     const isProductInCart = cart.items.some(
