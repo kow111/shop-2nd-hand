@@ -47,13 +47,22 @@ const postCreateProduct = async (req, res) => {
 
 const getProduct = async (req, res) => {
   try {
-    const { search, sortOrder, page, category } = req.query;
+    const {
+      search,
+      sortOrder,
+      page,
+      category,
+      selectedOptionStock,
+      selectedOptionPrice,
+    } = req.query;
 
     let rs = await getProductService({
       search,
       sortOrder,
       page,
       category,
+      selectedOptionStock,
+      selectedOptionPrice,
     });
     return res.status(200).json({
       DT: rs,

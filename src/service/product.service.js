@@ -43,9 +43,8 @@ const getProductService = async (filter = {}) => {
     }
     if (filter.category) {
       query.category = {
-        $in: filter.category.split(","),
+        $in: filter.category,
       };
-      // console.log(query);
     }
     let sort = {};
     if (filter.sortOrder === "1") {
@@ -55,6 +54,28 @@ const getProductService = async (filter = {}) => {
     }
 
     sort._id = 1;
+
+    if (filter.selectedOptionStock) {
+      if (filter.selectedOptionStock == 0) {
+        query.quantity = 0;
+      } else if (filter.selectedOptionStock == 1) {
+        query.quantity = { $lt: 5 };
+      } else if (filter.selectedOptionStock == 2) {
+        query.quantity = { $gt: 0 };
+      }
+    }
+
+    if (filter.selectedOptionPrice) {
+      if (filter.selectedOptionPrice == 0) {
+        query.price = { $lt: 100000 };
+      } else if (filter.selectedOptionPrice == 1) {
+        query.price = { $gte: 100000, $lte: 500000 };
+      } else if (filter.selectedOptionPrice == 2) {
+        query.price = { $gte: 500000, $lte: 1000000 };
+      } else if (filter.selectedOptionPrice == 3) {
+        query.price = { $gt: 1000000 };
+      }
+    }
 
     const totalItems = await Product.countDocuments(query);
     const totalPages = Math.ceil(totalItems / limit);
