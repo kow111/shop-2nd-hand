@@ -93,7 +93,11 @@ const cancelOrderService = async (orderId, userId) => {
       }
     }
     order.status = "CANCELLED";
-    if (order.discountCode) {
+    if (
+      order.discountCode &&
+      order.discountCode !== null &&
+      order.discountCode !== ""
+    ) {
       const discount = await Discount.findById(order.discountCode);
       if (discount) {
         discount.usersUsed = discount.usersUsed.filter(
