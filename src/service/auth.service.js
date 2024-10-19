@@ -8,7 +8,13 @@ const transporter = require("../config/email.transporter");
 const signupService = async (data) => {
   try {
     const { email, password } = data;
-
+    const user = await User.findOne({ email });
+    if (user) {
+      throw new Error("Email is already taken");
+    };
+    if (password.length < 6) {
+      throw new Error("Password must be at least 6 characters");
+    };
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
@@ -29,6 +35,9 @@ const loginService = async (data) => {
     if (!user) {
       throw new Error("User not found");
     }
+    if (password.length < 6) {
+      throw new Error("Password must be at least 6 characters");
+    };
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       throw new Error("Password is incorrect");
@@ -99,6 +108,9 @@ const resetPasswordService = async (data) => {
     }
     if (user.otp !== otp) {
       throw new Error("OTP is incorrect");
+    }
+    if (newPassword.length < 6) {
+      throw new Error("Password must be at least 6 characters");
     }
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(newPassword, salt);
