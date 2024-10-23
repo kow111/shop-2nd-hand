@@ -13,7 +13,7 @@ const getCartItemService = async (userId) => {
 const updateCartItemService = async (userId, data) => {
   try {
     const cart = await Cart.findOne({ user: userId });
-    if (!cart) throw new Error("Cart not found for this user.");
+    if (!cart) throw new Error("Không tìm thấy giỏ hàng");
 
     if (data.deleteProduct && data.deleteProduct.length > 0) {
       return await removeProductsFromCart(cart, data.deleteProduct);
@@ -48,14 +48,14 @@ const removeProductsFromCart = async (cart, productsToDelete) => {
 };
 
 const addProductToCart = async (cart, data) => {
-  if (!data.quantity) throw new Error("Quantity is required.");
+  if (!data.quantity) throw new Error("Nhập số lượng sản phẩm");
 
   cart.items.push({ product: data.productId, quantity: data.quantity });
   return await cart.save({ new: true });
 };
 
 const updateProductQuantityInCart = async (userId, data) => {
-  if (!data.quantity) throw new Error("Quantity is required.");
+  if (!data.quantity) throw new Error("Nhập số lượng sản phẩm");
 
   return await Cart.findOneAndUpdate(
     { user: userId, "items.product": data.productId },

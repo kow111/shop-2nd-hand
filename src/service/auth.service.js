@@ -10,10 +10,10 @@ const signupService = async (data) => {
     const { email, password } = data;
     const user = await User.findOne({ email });
     if (user) {
-      throw new Error("Email is already taken");
+      throw new Error("Email đã tồn tài");
     };
     if (password.length < 6) {
-      throw new Error("Password must be at least 6 characters");
+      throw new Error("Mật khẩu ít nhất 6 ký tự");
     };
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
@@ -33,14 +33,11 @@ const loginService = async (data) => {
     const { email, password } = data;
     const user = await User.findOne({ email });
     if (!user) {
-      throw new Error("User not found");
+      throw new Error("Email chưa đăng ký");
     }
-    if (password.length < 6) {
-      throw new Error("Password must be at least 6 characters");
-    };
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-      throw new Error("Password is incorrect");
+      throw new Error("Mật khẩu không đúng");
     }
     const token = jwt.sign(
       { userId: user._id, email: user.email, is_admin: user.is_admin },
@@ -60,7 +57,7 @@ const verifiedUserService = async (data) => {
     const { email, otp } = data;
     const user = await User.findOne({ email });
     if (!user) {
-      throw new Error("User not found");
+      throw new Error("Không tìm thấy người dùng");
     }
     if (user.otp !== otp) {
       throw new Error("OTP is incorrect");
@@ -78,7 +75,7 @@ const sendOTPService = async (data) => {
     const { email } = data;
     const user = await User.findOne({ email });
     if (!user) {
-      throw new Error("User not found");
+      throw new Error("Không tìm thấy người dùng");
     }
     const otp = crypto.randomBytes(3).toString("hex");
     user.otp = otp;
@@ -104,13 +101,13 @@ const resetPasswordService = async (data) => {
     const { email, otp, newPassword } = data;
     const user = await User.findOne({ email });
     if (!user) {
-      throw new Error("User not found");
+      throw new Error("Không tìm thấy người dùng");
     }
     if (user.otp !== otp) {
-      throw new Error("OTP is incorrect");
+      throw new Error("OTP không đúng");
     }
     if (newPassword.length < 6) {
-      throw new Error("Password must be at least 6 characters");
+      throw new Error("Mật khẩu ít nhất 6 ký tự");
     }
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(newPassword, salt);
@@ -130,7 +127,7 @@ const verifyPasswordService = async (data) => {
       .select("password");
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-      throw new Error("Password is incorrect");
+      throw new Error("Mât khẩu không đúng");
     }
   }
   catch (error) {

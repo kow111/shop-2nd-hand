@@ -13,7 +13,7 @@ const postCreateCategory = async (req, res) => {
     let rs = await createCategoryService(data);
     return res.status(200).json({
       DT: rs,
-      EM: "Create product successfully",
+      EM: "Tạo danh mục thành công",
     });
   } catch (error) {
     return res.status(400).json({
@@ -28,7 +28,7 @@ const getAllCategory = async (req, res) => {
     let rs = await getCategoryService();
     return res.status(200).json({
       DT: rs,
-      EM: "Get all category successfully",
+      EM: "Lấy danh mục thành công",
     });
   } catch (error) {
     return res.status(400).json({
@@ -49,7 +49,7 @@ const putUpdateCategory = async (req, res) => {
     let rs = await updateCategoryService(id, data);
     return res.status(200).json({
       DT: rs,
-      EM: "Update category successfully",
+      EM: "Cập nhật danh mục thành công",
     });
   } catch (error) {
     return res.status(400).json({

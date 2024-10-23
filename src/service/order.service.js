@@ -79,10 +79,10 @@ const cancelOrderService = async (orderId, userId) => {
       throw new Error("Order not found");
     }
     if (order.status === "CANCELLED") {
-      throw new Error("Order already cancelled");
+      throw new Error("Đơn hàng đã bị hủy");
     }
     if (order.status !== "PENDING") {
-      throw new Error("You can only cancel orders that are pending");
+      throw new Error("Bạn chỉ có thể hủy đơn hàng khi đơn hàng đang ở trạng thái chờ xác nhận");
     }
     for (const item of order.products) {
       const product = await Product.findById(item.product);
@@ -117,7 +117,7 @@ const changeOrderStatusService = async (orderId, status) => {
   try {
     let order = await Order.findById(orderId);
     if (!order) {
-      throw new Error("Order not found");
+      throw new Error("Không tìm thấy đơn hàng");
     }
     order.status = status;
     await order.save();

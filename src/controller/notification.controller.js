@@ -6,7 +6,7 @@ const getNotifications = async (req, res) => {
     let rs = await getNotificationService(userId);
     return res.status(200).json({
       DT: rs,
-      EM: "Get notification successfully",
+      EM: "Lấy thông báo thành công",
     });
   } catch (error) {
     return res.status(400).json({

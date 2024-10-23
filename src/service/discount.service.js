@@ -14,19 +14,19 @@ const applyDiscountService = async (discountCode, userId) => {
   try {
     const discount = await Discount.findById(discountCode);
     if (!discount) {
-      throw new Error("Discount code is not valid");
+      throw new Error("Mã giảm giá không hợp lệ");
     }
     if (discount.usersUsed.includes(userId)) {
-      throw new Error("Discount code has been used");
+      throw new Error("Mã giảm giá đã được sử dụng");
     }
     if (discount.expiredAt && discount.expiredAt < new Date()) {
-      throw new Error("Discount code is expired");
+      throw new Error("Mã giảm giá đã hết hạn");
     }
     if (
       discount.usageLimit &&
       discount.usersUsed.length >= discount.usageLimit
     ) {
-      throw new Error("Discount code is out of usage");
+      throw new Error("Mã giảm giá đã hết lượt sử dụng");
     }
     discount.usersUsed.push(userId);
     await discount.save();
@@ -42,19 +42,19 @@ const getDiscountByCodeService = async (discountCode, userId) => {
       _id: discountCode,
     });
     if (!discount) {
-      throw new Error("Discount code is not valid");
+      throw new Error("Mã giảm giá không hợp lệ");
     }
     if (discount.usersUsed.includes(userId)) {
-      throw new Error("Discount code has been used");
+      throw new Error("Mã giảm giá đã được sử dụng");
     }
     if (discount.expiredAt && discount.expiredAt < new Date()) {
-      throw new Error("Discount code is expired");
+      throw new Error("Mã giảm giá đã hết hạn");
     }
     if (
       discount.usageLimit &&
       discount.usersUsed.length >= discount.usageLimit
     ) {
-      throw new Error("Discount code is out of usage");
+      throw new Error("Mã giảm giá đã hết lượt sử dụng");
     }
     return discount;
   } catch (error) {

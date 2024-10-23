@@ -35,7 +35,7 @@ const postCreateProduct = async (req, res) => {
     let rs = await createProductService(data);
     return res.status(200).json({
       DT: rs,
-      EM: "Create product successfully",
+      EM: "Tạo sản phẩm thành công",
     });
   } catch (error) {
     return res.status(400).json({
@@ -66,7 +66,7 @@ const getProduct = async (req, res) => {
     });
     return res.status(200).json({
       DT: rs,
-      EM: "Search products successfully",
+      EM: "Tìm kiếm sản phẩm thành công",
     });
   } catch (error) {
     return res.status(400).json({
@@ -83,7 +83,7 @@ const getProductById = async (req, res) => {
     let rs = await getProductByIdService(id);
     return res.status(200).json({
       DT: rs,
-      EM: "Get product by id successfully",
+      EM: "Lấy sản phẩm theo id thành công",
     });
   } catch (error) {
     return res.status(400).json({
@@ -110,7 +110,7 @@ const putUpdateProduct = async (req, res) => {
     let rs = await updateProductService(id, data, actions);
     return res.status(200).json({
       DT: rs,
-      EM: "Update product successfully",
+      EM: "Cập nhật sản phẩm thành công",
     });
   } catch (error) {
     return res.status(400).json({

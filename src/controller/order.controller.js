@@ -41,7 +41,7 @@ const postCreateOrder = async (req, res) => {
     });
     return res.status(200).json({
       DT: rs,
-      EM: "Create order successfully",
+      EM: "Tạo đơn hàng thành công",
     });
   } catch (error) {
     return res.status(400).json({
@@ -58,7 +58,7 @@ const putCancelOrder = async (req, res) => {
     let rs = await cancelOrderService(orderId, userId);
     return res.status(200).json({
       DT: rs,
-      EM: "Cancel order successfully",
+      EM: "Hủy đơn hàng thành công",
     });
   } catch (error) {
     return res.status(400).json({
@@ -75,7 +75,7 @@ const putChangeOrderStatus = async (req, res) => {
     let rs = await changeOrderStatusService(orderId, status);
     return res.status(200).json({
       DT: rs,
-      EM: "Change order status successfully",
+      EM: "Cập nhật trạng thái đơn hàng thành công",
     });
   } catch (error) {
     return res.status(400).json({
@@ -91,7 +91,7 @@ const getOrderByUser = async (req, res) => {
     let rs = await getOrderByUserService(userId);
     return res.status(200).json({
       DT: rs,
-      EM: "Get order by user successfully",
+      EM: "Lấy đơn hàng của người dùng thành công",
     });
   } catch (error) {
     return res.status(400).json({
@@ -107,7 +107,7 @@ const getOrderById = async (req, res) => {
     let rs = await getOrderByIdService(orderId);
     return res.status(200).json({
       DT: rs,
-      EM: "Get order by id successfully",
+      EM: "Lấy đơn hàng theo id thành công",
     });
   } catch (error) {
     return res.status(400).json({
@@ -123,7 +123,7 @@ const getProductUserPurchased = async (req, res) => {
     let rs = await getProductUserPurchasedService(userId);
     return res.status(200).json({
       DT: rs,
-      EM: "Get product user purchased successfully",
+      EM: "Lấy sản phẩm đã mua của người dùng thành công",
     });
   } catch (error) {
     return res.status(400).json({
@@ -139,7 +139,7 @@ const getOrderByAdmin = async (req, res) => {
     let rs = await getOrderByAdminService({ page });
     return res.status(200).json({
       DT: rs,
-      EM: "Get order by admin successfully",
+      EM: "Lấy đơn hàng của admin thành công",
     });
   } catch (error) {
     return res.status(400).json({

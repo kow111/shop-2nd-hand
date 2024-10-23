@@ -9,7 +9,7 @@ const updateUserService = async (userId, data) => {
 
     const user = await User.findById(userId);
     if (!user) {
-      throw new Error("User not found");
+      throw new Error("Không tìm thấy người dùng");
     }
 
     if (username) user.username = username;
@@ -31,7 +31,7 @@ const updateEmailService = async (userId, data) => {
     // Tìm người dùng theo userId
     const user = await User.findById(userId);
     if (!user) {
-      throw new Error("User not found");
+      throw new Error("Không tìm thấy người dùng");
     }
     // Cập nhật email
     user.email = email;
@@ -47,7 +47,7 @@ const getUserByIdService = async (userId) => {
       .populate("favourites")
       .populate("discounts");
     if (!user) {
-      throw new Error("User not found");
+      throw new Error("Không tìm thấy người dùng");
     }
     return user;
   } catch (err) {
@@ -80,7 +80,7 @@ const updateUserAdminService = async (userId, data) => {
   try {
     const user = await User.findByIdAndUpdate({ _id: userId }, data);
     if (!user) {
-      throw new Error("User not found");
+      throw new Error("Không tìm thấy người dùng");
     }
     return user;
   } catch (err) {
@@ -92,11 +92,11 @@ const addFavouriteService = async (userId, productId) => {
   try {
     let product = await Product.findById(productId);
     if (!product) {
-      throw new Error("Product not found");
+      throw new Error("Không tìm thấy sản phẩm");
     }
     let user = await User.findById(userId);
     if (!user) {
-      throw new Error("User not found");
+      throw new Error("Không tìm thấy người dùng");
     }
 
     const productObjectId = new mongoose.Types.ObjectId(productId);
@@ -120,14 +120,14 @@ const addDiscountService = async (userId, discountId) => {
   try {
     let discount = await Discount.findById(discountId);
     if (!discount) {
-      throw new Error("Discount not found");
+      throw new Error("Không tìm thấy mã giảm giá");
     }
     let user = await User.findById(userId);
     if (!user) {
-      throw new Error("User not found");
+      throw new Error("Không tìm thấy người dùng");
     }
     if (user.discounts.includes(discountId)) {
-      throw new Error("Discount code has been used");
+      throw new Error("Mã giảm giá đã được dùng");
     }
     user.discounts.push(discountId);
     await user.save();

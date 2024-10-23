@@ -108,7 +108,7 @@ const updateProductService = async (id, data, imageActions) => {
     let product = await Product.findById(id);
 
     if (!product) {
-      throw new Error("Product not found");
+      throw new Error("Không tìm thấy sản phẩm");
     }
 
     if (data) {

@@ -15,7 +15,7 @@ const putUpdateUser = async (req, res) => {
     await updateUserService(userId, data);
     return res.status(200).json({
       DT: null,
-      EM: "Update user successfully",
+      EM: "Cập nhật user thành công",
     });
   } catch (error) {
     return res.status(400).json({
@@ -64,7 +64,7 @@ const putUpdateUserAdmin = async (req, res) => {
     await updateUserAdminService(userId, data);
     return res.status(200).json({
       DT: null,
-      EM: "Update user successfully",
+      EM: "Cập nhật user thành công",
     });
   } catch (error) {
     return res.status(400).json({
@@ -81,7 +81,7 @@ const putUpdateFavorite = async (req, res) => {
     const rs = await addFavouriteService(userId, productId);
     return res.status(200).json({
       DT: rs,
-      EM: "Add favourite successfully",
+      EM: "Thêm sản phẩm vào yêu thích thành công",
     });
   } catch (error) {
     return res.status(400).json({
@@ -98,7 +98,7 @@ const putUpdateDiscount = async (req, res) => {
     const rs = await addDiscountService(userId, discountCode);
     return res.status(200).json({
       DT: rs,
-      EM: "Add discount successfully",
+      EM: "Thêm mã giảm giá thành công",
     });
   } catch (error) {
     return res.status(400).json({

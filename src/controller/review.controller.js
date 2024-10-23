@@ -10,7 +10,7 @@ const getReviewByProduct = async (req, res) => {
     const rs = await getReviewByProductService(productId);
     res.status(200).json({
       DT: rs,
-      EM: "Get review by product successfully",
+      EM: "Lấy review theo sản phẩm thành công",
     });
   } catch (error) {
     res.status(400).json({ message: error.message });
@@ -29,7 +29,7 @@ const postCreateReview = async (req, res) => {
     const rs = await createReviewService(review);
     res.status(200).json({
       DT: rs,
-      EM: "Create review successfully",
+      EM: "Tạo review thành công",
     });
   } catch (error) {
     res.status(400).json({ message: error.message });

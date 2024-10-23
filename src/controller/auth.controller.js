@@ -23,7 +23,7 @@ const postSignupUser = async (req, res) => {
     let rs = await signupService(data);
     return res.status(200).json({
       DT: rs,
-      EM: "Create user successfully",
+      EM: "Tạo tài khoản thành công",
     });
   } catch (error) {
     return res.status(400).json({
@@ -43,7 +43,7 @@ const postLoginUser = async (req, res) => {
     let rs = await loginService(data);
     return res.status(200).json({
       DT: rs,
-      EM: "Login successfully",
+      EM: "Đăng nhập thành công",
     });
   } catch (error) {
     return res.status(400).json({
@@ -63,7 +63,7 @@ const postVerifiedUser = async (req, res) => {
     await verifiedUserService(data);
     return res.status(200).json({
       DT: null,
-      EM: "Verified successfully",
+      EM: "Xác thực tài khoản thành công",
     });
   } catch (error) {
     return res.status(400).json({
@@ -82,7 +82,7 @@ const postSendOTP = async (req, res) => {
     await sendOTPService(data);
     return res.status(200).json({
       DT: null,
-      EM: "OTP sent",
+      EM: "Đã gửi OTP",
     });
   } catch (error) {
     return res.status(400).json({
@@ -103,7 +103,7 @@ const postResetPassword = async (req, res) => {
     await resetPasswordService(data);
     return res.status(200).json({
       DT: null,
-      EM: "Reset password successfully",
+      EM: "Đổi mật khẩu thành công",
     });
   } catch (error) {
     return res.status(400).json({
@@ -123,7 +123,7 @@ const postVerifyPassword = async (req, res) => {
     await verifyPasswordService(data);
     return res.status(200).json({
       DT: null,
-      EM: "Password is correct",
+      EM: "Mật khẩu hợp lệ",
     });
   } catch (error) {
     return res.status(400).json({

@@ -8,7 +8,7 @@ const getCartItem = async (req, res) => {
     const rs = await getCartItemService(req.user.userId);
     return res.status(200).json({
       DT: rs,
-      EM: "Get cart item successfully",
+      EM: "Lấy giỏ hàng thành công",
     });
   } catch (error) {
     return res.status(400).json({
@@ -23,7 +23,7 @@ const putUpdateCartItem = async (req, res) => {
     const rs = await updateCartItemService(req.user.userId, req.body);
     return res.status(200).json({
       DT: rs,
-      EM: "Update cart item successfully",
+      EM: "Cập nhật giỏ hàng thành công",
     });
   } catch (error) {
     return res.status(400).json({

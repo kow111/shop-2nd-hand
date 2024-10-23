@@ -13,7 +13,7 @@ const postCreateAddress = async (req, res) => {
         await createAddressService(address);
         return res.status(200).json({
             DT: null,
-            EM: "Create address successfully",
+            EM: "Tạo địa chỉ thành công",
         });
     } catch (error) {
         return res.status(400).json({
@@ -31,7 +31,7 @@ const putUpdateAddress = async (req, res) => {
         await updateAddressService(addressId, data);
         return res.status(200).json({
             DT: null,
-            EM: "Update address successfully",
+            EM: "Cập nhật địa chỉ thành công",
         });
     } catch (error) {
         return res.status(400).json({
@@ -47,7 +47,7 @@ const deleteAddress = async (req, res) => {
         await deleteAddressService(addressId);
         return res.status(200).json({
             DT: null,
-            EM: "Delete address successfully",
+            EM: "Xóa địa chỉ thành công",
         });
     } catch (error) {
         return res.status(400).json({
@@ -63,7 +63,7 @@ const getAddressByUser = async (req, res) => {
         const rs = await getAddressByUserService(userId);
         return res.status(200).json({
             DT: rs,
-            EM: "Get address successfully",
+            EM: "Lấy địa chỉ thành công",
         });
     } catch (error) {
         return res.status(400).json({
@@ -80,7 +80,7 @@ const setDefaultAddress = async (req, res) => {
         await setDefaultAddressService(userId, addressId);
         return res.status(200).json({
             DT: null,
-            EM: "Set default address successfully",
+            EM: "Đăt địa chỉ mặc định thành công",
         });
     } catch (error) {
         return res.status(400).json({

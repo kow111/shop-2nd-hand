@@ -19,7 +19,7 @@ const postCreateDiscount = async (req, res) => {
     let rs = await addDiscountSerivce(data);
     return res.status(200).json({
       DT: rs,
-      EM: "Create discount successfully",
+      EM: "Tạo mã giảm giá thành công",
     });
   } catch (error) {
     return res.status(400).json({
@@ -36,7 +36,7 @@ const getApplyDiscount = async (req, res) => {
     let rs = await applyDiscountService(discountCode, userId);
     return res.status(200).json({
       DT: rs,
-      EM: "Apply discount successfully",
+      EM: "Dùng mã giảm giá thành công",
     });
   } catch (error) {
     return res.status(400).json({
@@ -53,7 +53,7 @@ const getDiscountByCode = async (req, res) => {
     let rs = await getDiscountByCodeService(discountCode, userId);
     return res.status(200).json({
       DT: rs,
-      EM: "Get discount by code successfully",
+      EM: "Lấy mã giảm giá theo code thành công",
     });
   } catch (error) {
     return res.status(400).json({
@@ -69,7 +69,7 @@ const getDiscount = async (req, res) => {
     let rs = await getDiscountService({ page });
     return res.status(200).json({
       DT: rs,
-      EM: "Get all discount successfully",
+      EM: "Lấy tất cả mã giảm giá thành công",
     });
   } catch (error) {
     return res.status(400).json({
@@ -85,7 +85,7 @@ const getDiscountUserDontHave = async (req, res) => {
     let rs = await getDiscountUserDontHaveService(userId);
     return res.status(200).json({
       DT: rs,
-      EM: "Get discount user dont have successfully",
+      EM: "Lấy mã giảm giá mà user chưa có thành công",
     });
   } catch (error) {
     return res.status(400).json({

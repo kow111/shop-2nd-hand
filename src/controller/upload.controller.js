@@ -3,7 +3,7 @@ const { uploadToFirebase } = require("../service/firebase.service");
 exports.uploadImage = async (req, res) => {
   try {
     if (!req.file) {
-      return res.status(400).send("No file uploaded.");
+      return res.status(400).send("Không có file nào được tải lên");
     }
 
     const fileBuffer = req.file.buffer;
@@ -20,11 +20,11 @@ exports.uploadImage = async (req, res) => {
 
     return res.status(200).send({
       DT: publicUrl,
-      EM: "File uploaded successfully",
+      EM: "Tải file lên thành công",
     });
   } catch (error) {
     return res.status(500).send({
-      message: "Error uploading file",
+      message: "Lỗi khi tải file lên",
       error: error.message,
     });
   }
