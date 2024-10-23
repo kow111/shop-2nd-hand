@@ -2,7 +2,29 @@ const Address = require("../model/address.model");
 
 const createAddressService = async (data) => {
     try {
+        // Lấy danh sách địa chỉ của người dùng
+        const existingAddresses = await getAddressByUserService(data.user);
+        // Kiểm tra số lượng địa chỉ
+        if (existingAddresses.length === 6) {
+            throw new Error("Số lượng địa chỉ tối đa là 6");
+        }
+
+        // Kiểm tra xem địa chỉ đã tồn tại chưa
+        const addressExists = existingAddresses.some(existingAddress =>
+            existingAddress.address === data.address &&
+            existingAddress.city === data.city &&
+            existingAddress.district === data.district &&
+            existingAddress.ward === data.ward
+        );
+        if (addressExists) {
+            throw new Error("Địa chỉ đã tồn tại");
+        }
+        // Đặt địa chỉ đầu tiên làm mặc định
+        if (existingAddresses.length === 0) {
+            address.isDefault = true;
+        }
         let address = await Address.create(data);
+
         return address;
     } catch (error) {
         throw new Error(error.message);
@@ -11,6 +33,17 @@ const createAddressService = async (data) => {
 
 const updateAddressService = async (id, data) => {
     try {
+        const existingAddresses = await getAddressByUserService(data.user);
+        const addressExists = existingAddresses.some(existingAddress =>
+            existingAddress.phone === data.phone &&
+            existingAddress.address === data.address &&
+            existingAddress.city === data.city &&
+            existingAddress.district === data.district &&
+            existingAddress.ward === data.ward
+        );
+        if (addressExists) {
+            throw new Error("Địa chỉ đã tồn tại");
+        }
         let address = await Address.findByIdAndUpdate(id, data)
         return address;
     } catch (error) {

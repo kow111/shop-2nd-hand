@@ -8,16 +8,8 @@ const {
 
 const postCreateAddress = async (req, res) => {
     try {
-        const userId = req.user.userId;
         const address = req.body;
-        address.user = userId;
-        const rs = await getAddressByUserService(userId);
-        if (rs.length === 6) {
-            return res.status(400).json({
-                DT: null,
-                EM: "You can only have 6 addresses",
-            });
-        }
+        address.user = req.user.userId;
         await createAddressService(address);
         return res.status(200).json({
             DT: null,
@@ -35,6 +27,7 @@ const putUpdateAddress = async (req, res) => {
     try {
         const addressId = req.params.addressId;
         const data = req.body;
+        data.user = req.user.userId;
         await updateAddressService(addressId, data);
         return res.status(200).json({
             DT: null,
