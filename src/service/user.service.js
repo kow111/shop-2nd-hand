@@ -17,7 +17,6 @@ const updateUserService = async (userId, data) => {
     if (gender && ["MALE", "FEMALE", "OTHER"].includes(gender)) {
       user.gender = gender;
     }
-    if (address) user.address = address;
     if (image) user.image = image;
 
     await user.save();

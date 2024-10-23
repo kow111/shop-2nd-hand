@@ -11,7 +11,6 @@ const userSchema = new mongoose.Schema({
   is_verified: { type: Boolean, default: false },
   is_admin: { type: Boolean, default: false },
   is_active: { type: Boolean, default: true },
-  address: { type: String, default: "" },
   otp: { type: String, default: null },
   favourites: [{ type: mongoose.Schema.Types.ObjectId, ref: "Product" }],
   discounts: [{ type: mongoose.Schema.Types.ObjectId, ref: "Discount" }],
