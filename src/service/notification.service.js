@@ -1,4 +1,5 @@
 const Notification = require("../model/notification.model");
+const { getSocket } = require("../config/socket");
 
 const sendNotificationService = async (data) => {
   const { user, order, message } = data;
@@ -8,6 +9,8 @@ const sendNotificationService = async (data) => {
       order,
       message,
     });
+    const io = getSocket();
+    io.emit("notification", rs);
     return rs;
   } catch (error) {
     throw new Error(error.message);

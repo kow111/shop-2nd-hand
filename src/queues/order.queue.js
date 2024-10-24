@@ -12,7 +12,7 @@ orderStatusQueue.process(async (job) => {
 });
 
 const addChangeOrderStatusJob = (jobData) => {
-  orderStatusQueue.add(jobData, { delay: 30 * 60 * 1000 });
+  orderStatusQueue.add(jobData, { delay: 0.3 * 60 * 1000 });
 };
 
 module.exports = {
