@@ -22,7 +22,7 @@ const createAddressService = async (data) => {
     }
     // Đặt địa chỉ đầu tiên làm mặc định
     if (existingAddresses.length === 0) {
-      address.isDefault = true;
+      data.isDefault = true;
     }
     let address = await Address.create(data);
 
