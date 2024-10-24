@@ -19,7 +19,7 @@ const sendNotificationService = async (data) => {
 
 const getNotificationService = async (userId) => {
   try {
-    let rs = await Notification.find({ user: userId });
+    let rs = await Notification.find({ user: userId }).sort({ createdAt: -1 });
     return rs;
   } catch (error) {
     throw new Error(error.message);
