@@ -8,6 +8,8 @@ const productchema = new mongoose.Schema({
   quantity: { type: Number, required: true },
   images: { type: [String], default: [] },
   price: { type: Number, required: true },
+  color: { type: mongoose.Schema.Types.ObjectId, ref: "Color", required: true },
+  condition: { type: String, enum: ["NEW", "99%", "98%"], required: true },
 });
 
 const Product = mongoose.model("Product", productchema);

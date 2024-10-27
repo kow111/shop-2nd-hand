@@ -13,25 +13,7 @@ const postCreateProduct = async (req, res) => {
     return res.status(400).json({ DT: null, EM: errorMessages[0] });
   }
   try {
-    const {
-      productName,
-      description,
-      size,
-      category,
-      quantity,
-      images,
-      price,
-    } = req.body;
-    let data = {
-      productName,
-      description,
-      size,
-      category,
-      quantity,
-      images,
-      price,
-    };
-
+    const data = req.body;
     let rs = await createProductService(data);
     return res.status(200).json({
       DT: rs,
@@ -54,6 +36,8 @@ const getProduct = async (req, res) => {
       category,
       selectedOptionStock,
       selectedOptionPrice,
+      color,
+      condition,
     } = req.query;
 
     let rs = await getProductService({
@@ -63,6 +47,8 @@ const getProduct = async (req, res) => {
       category,
       selectedOptionStock,
       selectedOptionPrice,
+      color,
+      condition,
     });
     return res.status(200).json({
       DT: rs,
@@ -96,8 +82,16 @@ const getProductById = async (req, res) => {
 const putUpdateProduct = async (req, res) => {
   try {
     const { id } = req.params;
-    const { productName, description, size, category, quantity, price } =
-      req.body;
+    const {
+      productName,
+      description,
+      size,
+      category,
+      quantity,
+      price,
+      color,
+      condition,
+    } = req.body;
     let data = {
       productName,
       description,
@@ -105,6 +99,8 @@ const putUpdateProduct = async (req, res) => {
       category,
       quantity,
       price,
+      color,
+      condition,
     };
     let { actions } = req.body;
     let rs = await updateProductService(id, data, actions);
