@@ -1,51 +1,81 @@
+const moment = require('moment');
+const config = require('../config/vnpay.config.json');
 const querystring = require('qs');
 const crypto = require('crypto');
+const Order = require("../model/order.model");
 
-// URL thanh toán VNPAY
-const VNPAY_URL = 'https://sandbox.vnpayment.vn/paymentv2/vpcpay.html';
-const VNPAY_TMN_CODE = 'VI14NZI3';
-const VNPAY_HASH_SECRET = 'N43J8WMNSI55AYC71EEDMQ10IE0JDWE7';
-
-// Hàm tạo URL thanh toán
-const createPaymentService = (data) => {
-    const { amount } = data;
-    // Thời gian hiện tại
+function createPaymentUrl(amount, ipAddr, orderId, returnUrl) {
+    const tmnCode = config.vnp_TmnCode;
+    const secretKey = config.vnp_HashSecret;
+    let vnpUrl = config.vnp_Url;
     const date = new Date();
-    orderId = date.toISOString().slice(0, 19).replace(/T/, '').replace(/:/g, '').replace(/-/g, '');
-    // Tạo dữ liệu thanh toán
-    const vnp_Params = {
-        vnp_Version: '2.0.0',
-        vnp_Command: 'pay',
-        vnp_TmnCode: VNPAY_TMN_CODE,
-        vnp_Locale: 'vn',
-        vnp_CurrCode: 'VND',
-        vnp_TxnRef: orderId, // Mã đơn hàng
-        vnp_OrderInfo: `Thanh toán đơn hàng ${orderId}`, // Thông tin đơn hàng
-        vnp_OrderType: '200000', // Loại đơn hàng
-        vnp_Amount: (amount * 100).toString(), // Số tiền (VND, nhân với 100)
-        vnp_ReturnUrl: 'http://localhost:3000/api/v1/payment/result', // URL trả về
-        vnp_IpAddr: "192.168.0.102", // Địa chỉ IP
-        vnp_CreateDate: date.toISOString().slice(0, 19).replace(/T/, '').replace(/:/g, '').replace(/-/g, ''), // Ngày tạo
+    const createDate = moment(date).format('YYYYMMDDHHmmss');
+
+    const currCode = 'VND';
+
+    let vnp_Params = {
+        'vnp_Version': '2.0.0',
+        'vnp_Command': 'pay',
+        'vnp_TmnCode': tmnCode,
+        'vnp_Locale': 'vn',
+        'vnp_CurrCode': currCode,
+        'vnp_TxnRef': orderId,
+        'vnp_OrderInfo': `Thanh toán đơn hàng ${orderId}`,
+        'vnp_OrderType': 'other',
+        'vnp_Amount': amount * 100,
+        'vnp_ReturnUrl': returnUrl,
+        'vnp_IpAddr': ipAddr,
+        'vnp_CreateDate': createDate,
     };
 
-    const sortedParams = Object.keys(vnp_Params).sort().reduce((acc, key) => {
-        acc[key] = vnp_Params[key];
-        return acc;
-    }, {});
-
-    // Tạo chữ ký
-    const signData = querystring.stringify(sortedParams, { encode: false });
-    let hmac = crypto.createHmac("sha512", VNPAY_HASH_SECRET);
-    let signed = hmac.update(Buffer.from(signData, 'utf-8')).digest("hex");
-
-    // Thêm chữ ký vào tham số
+    vnp_Params = sortObject(vnp_Params);
+    const signData = querystring.stringify(vnp_Params, { encode: false });
+    const hmac = crypto.createHmac("sha512", secretKey);
+    const signed = hmac.update(Buffer.from(signData, 'utf-8')).digest("hex");
     vnp_Params['vnp_SecureHash'] = signed;
 
-    // Tạo URL thanh toán
-    const paymentUrl = `${VNPAY_URL}?${querystring.stringify(vnp_Params, { encode: false })}`;
+    vnpUrl += '?' + querystring.stringify(vnp_Params, { encode: false });
+    return vnpUrl;
+}
 
-    return paymentUrl;
-};
+function verifyChecksum(vnp_Params) {
+    console.log('vnp_Params1', vnp_Params);
+    const secureHash = vnp_Params['vnp_SecureHash'];
+    delete vnp_Params['vnp_SecureHash'];
+    delete vnp_Params['vnp_SecureHashType'];
 
+    vnp_Params = sortObject(vnp_Params);
+    console.log('vnp_Params2', vnp_Params);
+    const secretKey = config.vnp_HashSecret;
+    const signData = querystring.stringify(vnp_Params, { encode: false });
+    const hmac = crypto.createHmac("sha512", secretKey);
+    const signed = hmac.update(Buffer.from(signData, 'utf-8')).digest("hex");
+    console.log('signed', signed);
+    console.log('secureHash', secureHash);
+    return secureHash === signed;
+}
 
-module.exports = { createPaymentService };
+function sortObject(obj) {
+    const sorted = {};
+    const keys = Object.keys(obj).sort();
+    keys.forEach(key => {
+        sorted[key] = obj[key];
+    });
+    return sorted;
+}
+
+const updatePaymentStatus = async (orderId, rspCode) => {
+    let order = Order.findOne({ orderId });
+    if (!order)
+        throw new Error('Đơn hàng không tồn tại');
+    if (rspCode === '00') {
+        order.paymentStatus = 'PAID';
+    }
+    else {
+        order.paymentStatus = 'FAILED';
+    }
+    let rs = order.save();
+    return rs;
+}
+
+module.exports = { createPaymentUrl, verifyChecksum, updatePaymentStatus };

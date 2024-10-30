@@ -31,6 +31,11 @@ const orderSchema = new mongoose.Schema({
   address: { type: String, required: true },
   phone: { type: String, required: true },
   discountCode: { type: mongoose.Schema.Types.ObjectId, ref: "Discount" },
+  paymentStatus: {
+    type: String,
+    enum: ["PENDING", "PAID", "FAILED"],
+    default: "PENDING",
+  },
   createdAt: { type: Date, default: Date.now },
 });
 
