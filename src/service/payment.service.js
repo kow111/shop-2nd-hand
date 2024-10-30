@@ -65,7 +65,7 @@ function sortObject(obj) {
 }
 
 const updatePaymentStatus = async (orderId, rspCode) => {
-    let order = Order.findOne({ orderId });
+    let order = await Order.findById(orderId);
     if (!order)
         throw new Error('Đơn hàng không tồn tại');
     if (rspCode === '00') {
@@ -74,7 +74,7 @@ const updatePaymentStatus = async (orderId, rspCode) => {
     else {
         order.paymentStatus = 'FAILED';
     }
-    let rs = order.save();
+    let rs = await order.save();
     return rs;
 }
 

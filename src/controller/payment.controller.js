@@ -1,12 +1,14 @@
 const vnpayService = require('../service/payment.service');
-const Order = require("../model/order.model");
 
 function createPaymentUrl(req, res) {
     const { amount, orderId, returnUrl } = req.body;
     const ipAddr = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
     try {
         const paymentUrl = vnpayService.createPaymentUrl(amount, ipAddr, orderId, returnUrl);
-        res.json({ paymentUrl });
+        return res.status(200).json({
+            DT: paymentUrl,
+            EM: "Tạo URL thanh toán thành công",
+        });
     } catch (error) {
         res.status(400).json({ message: "Có lỗi xảy ra trong quá trình tạo URL thanh toán." + error });
     }
@@ -25,7 +27,7 @@ const vnpayVerify = async (req, res) => {
     } catch (error) {
         return res.status(400).json({
             DT: null,
-            EM: error.message,
+            EM: "Lỗi khi verify: " + error.message,
         });
     }
 }
