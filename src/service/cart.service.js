@@ -3,7 +3,11 @@ const Product = require("../model/product.model");
 
 const getCartItemService = async (userId) => {
   try {
-    const rs = await Cart.findOne({ user: userId }).populate("items.product");
+    // const rs = await Cart.findOne({ user: userId }).populate("items.product");
+    //delete the product with quantity = 0 in cart before return and then save the cart
+    const cart = await Cart.findOne({ user: userId }).populate("items.product");
+    cart.items = cart.items.filter((item) => item.product.quantity > 0);
+    const rs = await cart.save();
     return rs;
   } catch (error) {
     throw new Error(error.message);

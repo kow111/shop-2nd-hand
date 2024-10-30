@@ -4,6 +4,7 @@ const {
   getDiscountService,
   getDiscountByCodeService,
   getDiscountUserDontHaveService,
+  getAllDiscountsService,
 } = require("../service/discount.service");
 
 const postCreateDiscount = async (req, res) => {
@@ -95,10 +96,26 @@ const getDiscountUserDontHave = async (req, res) => {
   }
 };
 
+const getAllDiscount = async (req, res) => {
+  try {
+    let rs = await getAllDiscountsService();
+    return res.status(200).json({
+      DT: rs,
+      EM: "Lấy tất cả mã giảm giá thành công",
+    });
+  } catch (error) {
+    return res.status(400).json({
+      DT: null,
+      EM: error.message,
+    });
+  }
+};
+
 module.exports = {
   postCreateDiscount,
   getApplyDiscount,
   getDiscount,
   getDiscountByCode,
   getDiscountUserDontHave,
+  getAllDiscount,
 };

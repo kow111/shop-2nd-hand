@@ -5,6 +5,7 @@ const {
   getApplyDiscount,
   getDiscountByCode,
   getDiscountUserDontHave,
+  getAllDiscount,
 } = require("../controller/discount.controller");
 const { auth, requireAdmin } = require("../middleware/auth");
 
@@ -15,5 +16,6 @@ routerAPI.get("/", auth, requireAdmin, getDiscount);
 routerAPI.post("/", auth, requireAdmin, postCreateDiscount);
 routerAPI.get("/apply", auth, getApplyDiscount);
 routerAPI.get("/get-discount-user", auth, getDiscountUserDontHave);
+routerAPI.get("/all", getAllDiscount);
 
 module.exports = routerAPI;

@@ -10,6 +10,8 @@ const createProductService = async (data) => {
       quantity,
       images,
       price,
+      color,
+      condition,
     } = data;
     let rs = await Product.create({
       productName,
@@ -19,6 +21,8 @@ const createProductService = async (data) => {
       quantity,
       images,
       price,
+      color,
+      condition,
     });
     return rs;
   } catch (error) {
@@ -44,6 +48,16 @@ const getProductService = async (filter = {}) => {
     if (filter.category) {
       query.category = {
         $in: filter.category,
+      };
+    }
+    if (filter.color) {
+      query.color = {
+        $in: filter.color,
+      };
+    }
+    if (filter.condition) {
+      query.condition = {
+        $in: filter.condition,
       };
     }
     let sort = {};
@@ -84,7 +98,8 @@ const getProductService = async (filter = {}) => {
       .limit(limit)
       .skip(skip)
       .sort(sort)
-      .populate("category", "name");
+      .populate("category", "name")
+      .populate("color");
     return {
       products,
       totalPages,
@@ -118,6 +133,8 @@ const updateProductService = async (id, data, imageActions) => {
       if (data.category) product.category = data.category;
       if (data.quantity) product.quantity = data.quantity;
       if (data.price) product.price = data.price;
+      if (data.color) product.color = data.color;
+      if (data.condition) product.condition = data.condition;
     }
     if (imageActions && imageActions.length > 0) {
       imageActions.forEach((actionObj) => {

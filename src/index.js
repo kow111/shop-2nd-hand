@@ -1,8 +1,10 @@
 const express = require("express");
 const dotenv = require("dotenv");
-dotenv.config();
 const cors = require("cors");
+const http = require("http");
 const connection = require("./config/database");
+
+const { initSocket } = require("./config/socket");
 
 const authRoute = require("./route/auth.route");
 const productRoute = require("./route/product.route");
@@ -16,8 +18,13 @@ const reviewRoute = require("./route/review.route");
 const discountRoute = require("./route/discount.route");
 const paymentRoute = require("./route/payment.route");
 const addressRoute = require("./route/address.route");
+const colorRoute = require("./route/color.route");
+
+dotenv.config();
 
 const app = express();
+const server = http.createServer(app);
+
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -34,12 +41,16 @@ app.use("/api/v1/discount", discountRoute);
 app.use("/api/v1/user", userRoute);
 app.use("/api/v1/payment", paymentRoute);
 app.use("/api/v1/address", addressRoute);
+app.use("/api/v1/color", colorRoute);
+
+// Khởi tạo Socket.io
+initSocket(server);
 
 const PORT = process.env.PORT || 3000;
 (async () => {
   try {
     await connection();
-    app.listen(PORT, () => {
+    server.listen(PORT, () => {
       console.log(`Example app listening on port ${PORT}`);
     });
   } catch (e) {

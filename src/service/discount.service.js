@@ -107,10 +107,23 @@ const getDiscountUserDontHaveService = async (userId) => {
   }
 };
 
+const getAllDiscountsService = async () => {
+  try {
+    //get all valid discount
+    const discounts = await Discount.find({
+      $or: [{ expiredAt: { $gt: new Date() } }, { expiredAt: null }],
+    });
+    return discounts;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
 module.exports = {
   addDiscountSerivce,
   applyDiscountService,
   getDiscountService,
   getDiscountByCodeService,
   getDiscountUserDontHaveService,
+  getAllDiscountsService,
 };
