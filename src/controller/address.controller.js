@@ -5,6 +5,7 @@ const {
   getAddressByUserService,
   setDefaultAddressService,
 } = require("../service/address.service");
+const axios = require("axios");
 
 const postCreateAddress = async (req, res) => {
   try {
@@ -90,10 +91,40 @@ const setDefaultAddress = async (req, res) => {
   }
 };
 
+const checkAddress = async (req, res) => {
+  let { city, district, ward, specificAddress } = req.query;
+  if (district == "Quận Thủ Đức") {
+    district = "Thành phố Thủ Đức";
+  }
+  const address = `${specificAddress}, ${ward}, ${district}, ${city}, Vietnam`;
+  const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(address)}&format=json`;
+  try {
+    const rs = await axios.get(url);
+    if (rs.data.length > 0) {
+      return res.status(200).json({
+        DT: null,
+        EM: "Địa chỉ tồn tại",
+      });
+    }
+    else {
+      return res.status(400).json({
+        DT: null,
+        EM: "Địa chỉ không tồn tại",
+      });
+    }
+  } catch (error) {
+    return res.status(400).json({
+      DT: null,
+      EM: "Lỗi khi kiểm tra địa chỉ: " + error.message,
+    });
+  }
+};
+
 module.exports = {
   postCreateAddress,
   putUpdateAddress,
   deleteAddress,
   getAddressByUser,
   setDefaultAddress,
+  checkAddress,
 };

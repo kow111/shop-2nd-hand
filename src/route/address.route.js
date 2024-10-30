@@ -6,6 +6,7 @@ const {
     deleteAddress,
     getAddressByUser,
     setDefaultAddress,
+    checkAddress
 } = require("../controller/address.controller");
 const { auth } = require("../middleware/auth");
 
@@ -16,5 +17,5 @@ routerAPI.put("/:addressId", auth, putUpdateAddress);
 routerAPI.delete("/:addressId", auth, deleteAddress);
 routerAPI.get("/", auth, getAddressByUser);
 routerAPI.put("/default/:addressId", auth, setDefaultAddress);
-
+routerAPI.get("/checkAddress", checkAddress);
 module.exports = routerAPI;
