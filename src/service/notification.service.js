@@ -1,5 +1,5 @@
 const Notification = require("../model/notification.model");
-const { getSocket } = require("../config/socket");
+const { getSocket, userSocketMap } = require("../config/socket");
 
 const sendNotificationService = async (data) => {
   const { user, order, message } = data;
@@ -10,7 +10,12 @@ const sendNotificationService = async (data) => {
       message,
     });
     const io = getSocket();
-    io.emit("notification", rs);
+    const targetSocketId = userSocketMap[user];
+    if (targetSocketId) {
+      io.to(targetSocketId).emit("notification", rs);
+    } else {
+      console.log(`User with ID ${user} not connected`);
+    }
     return rs;
   } catch (error) {
     throw new Error(error.message);

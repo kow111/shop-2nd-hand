@@ -1,7 +1,7 @@
-// socket.js
 const { Server } = require("socket.io");
 
 let io;
+let userSocketMap = {};
 
 const initSocket = (server) => {
   io = new Server(server, {
@@ -11,9 +11,22 @@ const initSocket = (server) => {
   });
 
   io.on("connection", (socket) => {
-    console.log("A user connected");
+    console.log("A user connected:", socket.id);
+
+    socket.on("register", (userId) => {
+      userSocketMap[userId] = socket.id;
+      console.log(`User ${userId} registered with socket id: ${socket.id}`);
+    });
+
     socket.on("disconnect", () => {
-      console.log("User disconnected");
+      // Xóa user khỏi ánh xạ khi socket ngắt kết nối
+      for (let userId in userSocketMap) {
+        if (userSocketMap[userId] === socket.id) {
+          delete userSocketMap[userId];
+          break;
+        }
+      }
+      console.log("User disconnected:", socket.id);
     });
   });
 };
@@ -27,4 +40,4 @@ const getSocket = () => {
   return io;
 };
 
-module.exports = { initSocket, getSocket };
+module.exports = { initSocket, getSocket, userSocketMap };
