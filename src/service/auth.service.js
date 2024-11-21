@@ -11,10 +11,10 @@ const signupService = async (data) => {
     const user = await User.findOne({ email });
     if (user) {
       throw new Error("Email đã tồn tài");
-    };
+    }
     if (password.length < 6) {
       throw new Error("Mật khẩu ít nhất 6 ký tự");
-    };
+    }
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
@@ -122,18 +122,15 @@ const resetPasswordService = async (data) => {
 const verifyPasswordService = async (data) => {
   try {
     const { email, password } = data;
-    const user = await User
-      .findOne({ email })
-      .select("password");
+    const user = await User.findOne({ email }).select("password");
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       throw new Error("Mât khẩu không đúng");
     }
-  }
-  catch (error) {
+  } catch (error) {
     throw new Error(error.message);
   }
-}
+};
 
 module.exports = {
   signupService,
