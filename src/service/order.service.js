@@ -82,7 +82,9 @@ const cancelOrderService = async (orderId, userId) => {
       throw new Error("Đơn hàng đã bị hủy");
     }
     if (order.status !== "PENDING") {
-      throw new Error("Bạn chỉ có thể hủy đơn hàng khi đơn hàng đang ở trạng thái chờ xác nhận");
+      throw new Error(
+        "Bạn chỉ có thể hủy đơn hàng khi đơn hàng đang ở trạng thái chờ xác nhận"
+      );
     }
     for (const item of order.products) {
       const product = await Product.findById(item.product);
@@ -126,6 +128,20 @@ const changeOrderStatusService = async (orderId, status) => {
       orderId: order._id,
       newStatus: status,
     });
+    return order;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
+const changeOrderPaymentStatusService = async (orderId, status) => {
+  try {
+    let order = await Order.findById(orderId);
+    if (!order) {
+      throw new Error("Không tìm thấy đơn hàng");
+    }
+    order.paymentStatus = status;
+    await order.save();
     return order;
   } catch (error) {
     throw new Error(error.message);
@@ -182,14 +198,21 @@ const getOrderByAdminService = async (filter = {}) => {
   try {
     const limit = 10;
     let skip = 0;
+
     if (filter.page) {
       skip = (filter.page - 1) * limit;
     }
 
+    const query = {};
+
     const totalItems = await Order.countDocuments();
     const totalPages = Math.ceil(totalItems / limit);
 
-    let orders = await Order.find()
+    if (filter.status) {
+      query.status = filter.status;
+    }
+
+    let orders = await Order.find(query)
       .populate("products.product")
       .populate("discountCode")
       .limit(limit)
@@ -213,4 +236,5 @@ module.exports = {
   getOrderByIdService,
   getProductUserPurchasedService,
   getOrderByAdminService,
+  changeOrderPaymentStatusService,
 };

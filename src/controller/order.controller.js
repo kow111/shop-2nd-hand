@@ -8,6 +8,7 @@ const {
   getOrderByIdService,
   getProductUserPurchasedService,
   getOrderByAdminService,
+  changeOrderPaymentStatusService,
 } = require("../service/order.service");
 
 const postCreateOrder = async (req, res) => {
@@ -85,6 +86,23 @@ const putChangeOrderStatus = async (req, res) => {
   }
 };
 
+const putChangeOrderPaymentStatus = async (req, res) => {
+  try {
+    const { orderId } = req.params;
+    const { status } = req.body;
+    let rs = await changeOrderPaymentStatusService(orderId, status);
+    return res.status(200).json({
+      DT: rs,
+      EM: "Cập nhật trạng thái thanh toán đơn hàng thành công",
+    });
+  } catch (error) {
+    return res.status(400).json({
+      DT: null,
+      EM: error.message,
+    });
+  }
+};
+
 const getOrderByUser = async (req, res) => {
   try {
     const userId = req.user.userId;
@@ -135,8 +153,8 @@ const getProductUserPurchased = async (req, res) => {
 
 const getOrderByAdmin = async (req, res) => {
   try {
-    const { page } = req.query;
-    let rs = await getOrderByAdminService({ page });
+    const { page, status } = req.query;
+    let rs = await getOrderByAdminService({ page, status });
     return res.status(200).json({
       DT: rs,
       EM: "Lấy đơn hàng của admin thành công",
@@ -157,4 +175,5 @@ module.exports = {
   getOrderById,
   getProductUserPurchased,
   getOrderByAdmin,
+  putChangeOrderPaymentStatus,
 };

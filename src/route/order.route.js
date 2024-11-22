@@ -8,6 +8,7 @@ const {
   getOrderById,
   getProductUserPurchased,
   getOrderByAdmin,
+  putChangeOrderPaymentStatus,
 } = require("../controller/order.controller");
 const routerAPI = express.Router();
 
@@ -18,5 +19,6 @@ routerAPI.get("/:orderId", auth, getOrderById);
 routerAPI.post("/", auth, postCreateOrder);
 routerAPI.put("/cancel-order/:orderId", auth, putCancelOrder);
 routerAPI.put("/:orderId/status", auth, putChangeOrderStatus);
+routerAPI.put("/:orderId/payment-status", auth, putChangeOrderPaymentStatus);
 
 module.exports = routerAPI;
