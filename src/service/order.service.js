@@ -205,12 +205,12 @@ const getOrderByAdminService = async (filter = {}) => {
 
     const query = {};
 
-    const totalItems = await Order.countDocuments();
-    const totalPages = Math.ceil(totalItems / limit);
-
     if (filter.status) {
       query.status = filter.status;
     }
+
+    const totalItems = await Order.countDocuments(query);
+    const totalPages = Math.ceil(totalItems / limit);
 
     let orders = await Order.find(query)
       .populate("products.product")
