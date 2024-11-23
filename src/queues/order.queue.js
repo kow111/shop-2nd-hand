@@ -11,7 +11,7 @@ const orderStatusQueue = new Queue("orderStatusQueue", {
 
 orderStatusQueue.process(async (job) => {
   const { orderId } = job.data;
-  const isCancel = isOrderCanceled(orderId);
+  const isCancel = await isOrderCanceled(orderId);
   if (isCancel) {
     return;
   }
