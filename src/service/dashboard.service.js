@@ -2,11 +2,24 @@ const Order = require("../model/order.model");
 
 const getRevenueChartService = async (fromDate, toDate) => {
   try {
-    let dates = [];
-    let revenues = [];
     if (!fromDate || !toDate) {
       throw new Error("fromDate and toDate are required");
     }
+
+    const startDate = new Date(fromDate);
+    const endDate = new Date(toDate);
+
+    let dates = [];
+    let revenues = [];
+
+    let currentDate = new Date(startDate);
+
+    while (currentDate <= endDate) {
+      dates.push(currentDate.toISOString().split("T")[0]);
+      revenues.push(0);
+      currentDate.setDate(currentDate.getDate() + 1);
+    }
+
     let orders = await Order.find({
       status: { $in: ["CONFIRMED", "SHIPPED", "DELIVERED"] },
       createdAt: {
@@ -14,16 +27,15 @@ const getRevenueChartService = async (fromDate, toDate) => {
         $lte: new Date(toDate),
       },
     });
+
     orders.forEach((order) => {
       let date = order.createdAt.toISOString().split("T")[0];
       let index = dates.indexOf(date);
-      if (index === -1) {
-        dates.push(date);
-        revenues.push(order.totalAmount);
-      } else {
+      if (index !== -1) {
         revenues[index] += order.totalAmount;
       }
     });
+
     return {
       dates,
       revenues,
