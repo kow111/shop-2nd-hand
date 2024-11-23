@@ -1,4 +1,6 @@
 const Order = require("../model/order.model");
+const Product = require("../model/product.model");
+const User = require("../model/user.model");
 
 const getRevenueChartService = async (fromDate, toDate) => {
   try {
@@ -45,6 +47,39 @@ const getRevenueChartService = async (fromDate, toDate) => {
   }
 };
 
+const getDashboardStatsService = async () => {
+  try {
+    let totalRevenue = 0;
+    let totalOrders = 0;
+    let totalProducts = 0;
+    let totalUsers = 0;
+
+    let orders = await Order.find({
+      status: { $in: ["CONFIRMED", "SHIPPED", "DELIVERED"] },
+    });
+
+    orders.forEach((order) => {
+      totalRevenue += order.totalAmount;
+    });
+
+    totalOrders = orders.length;
+
+    totalProducts = await Product.countDocuments();
+
+    totalUsers = await User.countDocuments();
+
+    return {
+      totalRevenue,
+      totalOrders,
+      totalProducts,
+      totalUsers,
+    };
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
 module.exports = {
   getRevenueChartService,
+  getDashboardStatsService,
 };
