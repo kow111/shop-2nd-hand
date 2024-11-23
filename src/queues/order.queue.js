@@ -1,5 +1,8 @@
 const Queue = require("bull");
-const { changeOrderStatusService } = require("../service/order.service");
+const {
+  changeOrderStatusService,
+  isOrderCanceled,
+} = require("../service/order.service");
 const redisConfig = require("../config/redis.config");
 
 const orderStatusQueue = new Queue("orderStatusQueue", {
@@ -8,6 +11,10 @@ const orderStatusQueue = new Queue("orderStatusQueue", {
 
 orderStatusQueue.process(async (job) => {
   const { orderId } = job.data;
+  const isCancel = isOrderCanceled(orderId);
+  if (isCancel) {
+    return;
+  }
   await changeOrderStatusService(orderId, "CONFIRMED");
 });
 

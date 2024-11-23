@@ -228,6 +228,14 @@ const getOrderByAdminService = async (filter = {}) => {
   }
 };
 
+const isOrderCanceled = async (orderId) => {
+  const order = await Order.findById(orderId);
+  if (order.status === "CANCELLED") {
+    return true;
+  }
+  return false;
+};
+
 module.exports = {
   createOrderService,
   cancelOrderService,
@@ -237,4 +245,5 @@ module.exports = {
   getProductUserPurchasedService,
   getOrderByAdminService,
   changeOrderPaymentStatusService,
+  isOrderCanceled,
 };
