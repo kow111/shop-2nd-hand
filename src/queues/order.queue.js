@@ -13,9 +13,11 @@ orderStatusQueue.process(async (job) => {
   const { orderId } = job.data;
   const isCancel = await isOrderCanceled(orderId);
   if (isCancel) {
+    console.log(`Order ${orderId} is canceled, skipping confirmation.`);
     return;
   }
   await changeOrderStatusService(orderId, "CONFIRMED");
+  console.log(`Order ${orderId} status changed to CONFIRMED.`);
 });
 
 const addChangeOrderStatusJob = (jobData) => {
