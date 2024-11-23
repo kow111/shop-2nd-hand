@@ -47,6 +47,28 @@ const getRevenueChartService = async (fromDate, toDate) => {
   }
 };
 
+const getOrderStatusDistributionService = async () => {
+  try {
+    let orderStatusDistribution = {
+      CONFIRMED: 0,
+      SHIPPED: 0,
+      DELIVERED: 0,
+    };
+
+    let orders = await Order.find({
+      status: { $in: ["CONFIRMED", "SHIPPED", "DELIVERED"] },
+    });
+
+    orders.forEach((order) => {
+      orderStatusDistribution[order.status] += 1;
+    });
+
+    return orderStatusDistribution;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
 const getDashboardStatsService = async () => {
   try {
     let totalRevenue = 0;
@@ -82,4 +104,5 @@ const getDashboardStatsService = async () => {
 module.exports = {
   getRevenueChartService,
   getDashboardStatsService,
+  getOrderStatusDistributionService,
 };

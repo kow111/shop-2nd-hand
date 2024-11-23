@@ -1,6 +1,7 @@
 const {
   getRevenueChartService,
   getDashboardStatsService,
+  getOrderStatusDistributionService,
 } = require("../service/dashboard.service");
 
 const getRevenueChart = async (req, res) => {
@@ -25,7 +26,20 @@ const getDashboardStats = async (req, res) => {
   }
 };
 
+const getOrderStatusDistribution = async (req, res) => {
+  try {
+    const orderStatusDistribution = await getOrderStatusDistributionService();
+    return res.status(200).json({
+      DT: orderStatusDistribution,
+      EM: "Lấy dữ liệu phân phối trạng thái đơn hàng thành công",
+    });
+  } catch (error) {
+    return res.status(400).json({ message: error.message });
+  }
+};
+
 module.exports = {
   getRevenueChart,
   getDashboardStats,
+  getOrderStatusDistribution,
 };
