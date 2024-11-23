@@ -19,6 +19,7 @@ const discountRoute = require("./route/discount.route");
 const paymentRoute = require("./route/payment.route");
 const addressRoute = require("./route/address.route");
 const colorRoute = require("./route/color.route");
+const dashboardRoute = require("./route/dashboard.route");
 
 dotenv.config();
 
@@ -42,6 +43,7 @@ app.use("/api/v1/user", userRoute);
 app.use("/api/v1/payment", paymentRoute);
 app.use("/api/v1/address", addressRoute);
 app.use("/api/v1/color", colorRoute);
+app.use("/api/v1/dashboard", dashboardRoute);
 
 // Khởi tạo Socket.io
 initSocket(server);
