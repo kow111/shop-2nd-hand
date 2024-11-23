@@ -15,7 +15,7 @@ const putUpdateUser = async (req, res) => {
     await updateUserService(userId, data);
     return res.status(200).json({
       DT: null,
-      EM: "Cập nhật user thành công",
+      EM: "Cập nhật thông tin thành công",
     });
   } catch (error) {
     return res.status(400).json({
