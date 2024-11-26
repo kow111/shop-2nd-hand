@@ -3,6 +3,12 @@ const User = require("../model/user.model");
 
 const addDiscountSerivce = async (discount) => {
   try {
+    const discountCode = await Discount.findOne({
+      discountCode: discount.discountCode,
+    });
+    if (discountCode) {
+      throw new Error("Mã giảm giá đã tồn tại");
+    }
     const rs = await Discount.create(discount);
     return rs;
   } catch (error) {
