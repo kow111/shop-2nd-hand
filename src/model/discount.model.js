@@ -1,7 +1,11 @@
 const mongoose = require("mongoose");
 
 const discountSchema = new mongoose.Schema({
-  discountCode: { type: String, required: true, unique: true },
+  discountCode: {
+    type: String,
+    required: true,
+    unique: [true, "Mã giảm giá đã tồn tại"],
+  },
   discountPercentage: { type: Number, required: true },
   expiredAt: { type: Date },
   usageLimit: {
