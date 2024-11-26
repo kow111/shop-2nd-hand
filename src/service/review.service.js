@@ -14,14 +14,7 @@ const getReviewByProductService = async (productId) => {
 const createReviewService = async (review) => {
   try {
     let rs = await Review.create(review);
-    const discount = await getDiscountUserDontHaveService(review.user);
-    if (discount) {
-      await addDiscountService(review.user, discount._id);
-    }
-    return {
-      review: rs,
-      discount,
-    };
+    return rs;
   } catch (error) {
     throw new Error(error.message);
   }
