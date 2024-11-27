@@ -1,6 +1,7 @@
 const Discount = require("../model/discount.model");
 const Order = require("../model/order.model");
 const Product = require("../model/product.model");
+const Review = require("../model/review.model");
 const { addNotificationJob } = require("../queues/notification.queue");
 const { applyDiscountService } = require("./discount.service");
 const mongoose = require("mongoose");
@@ -177,17 +178,23 @@ const getProductUserPurchasedService = async (userId) => {
       status: "DELIVERED",
     }).populate("products.product");
 
+    const reviewedProductIds = new Set(
+      (await Review.find({ user: userId })).map((review) => review.product.toString())
+    );
+
     const productSet = new Set();
     const products = [];
 
-    orders.forEach((order) => {
-      order.products.forEach((item) => {
-        if (!productSet.has(item.product._id.toString())) {
-          productSet.add(item.product._id.toString());
+    for (const order of orders) {
+      for (const item of order.products) {
+        const productId = item.product._id.toString();
+        // Chỉ thêm sản phẩm nếu nó chưa có trong danh sách review
+        if (!reviewedProductIds.has(productId) && !productSet.has(productId)) {
+          productSet.add(productId);
           products.push(item.product);
         }
-      });
-    });
+      }
+    }
     return products;
   } catch (error) {
     throw new Error(error.message);
