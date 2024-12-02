@@ -1,3 +1,4 @@
+const CancelRequest = require("../model/cancel.request.model");
 const Discount = require("../model/discount.model");
 const Order = require("../model/order.model");
 const Product = require("../model/product.model");
@@ -77,15 +78,18 @@ const cancelOrderService = async (orderId, userId) => {
   try {
     let order = await Order.findOne({ _id: orderId, user: userId });
     if (!order) {
-      throw new Error("Order not found");
+      throw new Error("Không tìm thấy đơn hàng");
     }
     if (order.status === "CANCELLED") {
       throw new Error("Đơn hàng đã bị hủy");
     }
-    if (order.status !== "PENDING") {
-      throw new Error(
-        "Bạn chỉ có thể hủy đơn hàng khi đơn hàng đang ở trạng thái chờ xác nhận"
-      );
+    const cancelRequest = await CancelRequest.findOne({ order: orderId });
+    if (!cancelRequest) {
+      if (order.status !== "PENDING") {
+        throw new Error(
+          "Bạn chỉ có thể hủy đơn hàng khi đơn hàng đang ở trạng thái chờ xác nhận"
+        );
+      }
     }
     for (const item of order.products) {
       const product = await Product.findById(item.product);
@@ -104,7 +108,7 @@ const cancelOrderService = async (orderId, userId) => {
       const discount = await Discount.findById(order.discountCode);
       if (discount) {
         discount.usersUsed = discount.usersUsed.filter(
-          (user) => user.toString() !== userId
+          (user) => user.toString() !== userId.toString()
         );
         await discount.save();
       }
@@ -179,7 +183,9 @@ const getProductUserPurchasedService = async (userId) => {
     }).populate("products.product");
 
     const reviewedProductIds = new Set(
-      (await Review.find({ user: userId })).map((review) => review.product.toString())
+      (await Review.find({ user: userId })).map((review) =>
+        review.product.toString()
+      )
     );
 
     const productSet = new Set();
