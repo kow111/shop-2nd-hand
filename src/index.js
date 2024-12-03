@@ -21,6 +21,7 @@ const addressRoute = require("./route/address.route");
 const colorRoute = require("./route/color.route");
 const dashboardRoute = require("./route/dashboard.route");
 const cancelRequestRoute = require("./route/cancel.request.route");
+const bannerRoute = require("./route/banner.route");
 
 dotenv.config();
 
@@ -46,6 +47,7 @@ app.use("/api/v1/address", addressRoute);
 app.use("/api/v1/color", colorRoute);
 app.use("/api/v1/dashboard", dashboardRoute);
 app.use("/api/v1/cancel-request", cancelRequestRoute);
+app.use("/api/v1/banner", bannerRoute);
 
 // Khởi tạo Socket.io
 initSocket(server);
