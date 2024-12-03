@@ -47,6 +47,45 @@ const getRevenueChartService = async (fromDate, toDate) => {
   }
 };
 
+const getRevenueChartByMonthService = async (year) => {
+  try {
+    if (!year) {
+      throw new Error("Year is required");
+    }
+
+    let months = [];
+    let revenues = [];
+
+    for (let i = 1; i <= 12; i++) {
+      months.push(i);
+      revenues.push(0);
+    }
+
+    let orders = await Order.find({
+      status: { $in: ["CONFIRMED", "SHIPPED", "DELIVERED"] },
+      createdAt: {
+        $gte: new Date(year, 0, 1),
+        $lte: new Date(year, 11, 31),
+      },
+    });
+
+    orders.forEach((order) => {
+      let month = order.createdAt.getMonth() + 1;
+      let index = months.indexOf(month);
+      if (index !== -1) {
+        revenues[index] += order.totalAmount;
+      }
+    });
+
+    return {
+      months,
+      revenues,
+    };
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
 const getOrderStatusDistributionService = async () => {
   try {
     let orderStatusDistribution = {
@@ -105,4 +144,5 @@ module.exports = {
   getRevenueChartService,
   getDashboardStatsService,
   getOrderStatusDistributionService,
+  getRevenueChartByMonthService,
 };
