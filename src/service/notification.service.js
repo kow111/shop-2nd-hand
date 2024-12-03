@@ -9,6 +9,7 @@ const sendNotificationService = async (data) => {
       order,
       message,
     });
+    console.log(`Notification sent to user ${user}`);
     const io = getSocket();
     const targetSocketId = userSocketMap[user];
     if (targetSocketId) {
@@ -31,7 +32,21 @@ const getNotificationService = async (userId) => {
   }
 };
 
+const readNotificationService = async (notificationId) => {
+  try {
+    let rs = await Notification.findByIdAndUpdate(
+      notificationId,
+      { isRead: true },
+      { new: true }
+    );
+    return rs;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
 module.exports = {
   sendNotificationService,
   getNotificationService,
+  readNotificationService,
 };
