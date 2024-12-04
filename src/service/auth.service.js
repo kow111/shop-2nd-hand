@@ -21,6 +21,8 @@ const signupService = async (data) => {
     let rs = await User.create({
       email,
       password: hashedPassword,
+      image:
+        "https://firebasestorage.googleapis.com/v0/b/shop-2nd-hand.appspot.com/o/default-image.png?alt=media",
     });
     return rs;
   } catch (err) {
