@@ -177,35 +177,52 @@ const getOrderByIdService = async (orderId) => {
 
 const getProductUserPurchasedService = async (userId) => {
   try {
-    let orders = await Order.find({
+    // Lấy danh sách đơn hàng đã giao của user
+    const orders = await Order.find({
       user: userId,
       status: "DELIVERED",
     }).populate("products.product");
 
-    const reviewedProductIds = new Set(
-      (await Review.find({ user: userId })).map((review) =>
-        review.product.toString()
-      )
-    );
+    // Lấy danh sách review của user
+    const reviews = await Review.find({ user: userId }).populate("product");
 
-    const productSet = new Set();
-    const products = [];
+    // Tập hợp ID của các sản phẩm đã được review
+    const reviewedProductIds = new Set(reviews.map((review) => review.product._id.toString()));
 
+    const productSet = new Set(); // Dùng để tránh thêm trùng sản phẩm
+    const productsWithoutReview = []; // Danh sách sản phẩm chưa review
+    const productsWithReview = []; // Danh sách sản phẩm đã review với review của user
+
+    // Lọc sản phẩm từ danh sách đơn hàng
     for (const order of orders) {
       for (const item of order.products) {
         const productId = item.product._id.toString();
-        // Chỉ thêm sản phẩm nếu nó chưa có trong danh sách review
-        if (!reviewedProductIds.has(productId) && !productSet.has(productId)) {
+        // Kiểm tra nếu sản phẩm chưa được thêm vào bất kỳ danh sách nào
+        if (!productSet.has(productId)) {
           productSet.add(productId);
-          products.push(item.product);
+          if (reviewedProductIds.has(productId)) {
+            // Nếu sản phẩm đã review, thêm vào danh sách đã review cùng review của user
+            const userReview = reviews.find(
+              (review) => review.product._id.toString() === productId
+            );
+            productsWithReview.push({ product: item.product, review: userReview });
+          } else {
+            // Nếu sản phẩm chưa review, thêm vào danh sách chưa review
+            productsWithoutReview.push(item.product);
+          }
         }
       }
     }
-    return products;
+
+    return {
+      productsWithoutReview,
+      productsWithReview,
+    };
   } catch (error) {
     throw new Error(error.message);
   }
 };
+
 
 const getOrderByAdminService = async (filter = {}) => {
   try {
