@@ -20,4 +20,14 @@ const createReviewService = async (review) => {
   }
 };
 
-module.exports = { createReviewService, getReviewByProductService };
+const updateReviewService = async (review) => {
+  try {
+    const reviewId = review._id;
+    let rs = await Review.findByIdAndUpdate(reviewId, review);
+    return rs;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
+module.exports = { createReviewService, getReviewByProductService, updateReviewService };
