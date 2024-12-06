@@ -2,7 +2,6 @@ const moment = require('moment');
 const config = require('../config/vnpay.config.json');
 const querystring = require('qs');
 const crypto = require('crypto');
-const Order = require("../model/order.model");
 
 function createPaymentUrl(amount, ipAddr, orderId, returnUrl) {
     const tmnCode = config.vnp_TmnCode;
@@ -10,8 +9,11 @@ function createPaymentUrl(amount, ipAddr, orderId, returnUrl) {
     let vnpUrl = config.vnp_Url;
     const date = new Date();
     const createDate = moment(date).format('YYYYMMDDHHmmss');
-
     const currCode = 'VND';
+
+    const baseOrderId = orderId;
+    const randomAttempt = Math.floor(100000 + Math.random() * 900000);
+    const TxnRef = `${baseOrderId}-ATTEMPT${randomAttempt}`;
 
     let vnp_Params = {
         'vnp_Version': '2.0.0',
@@ -19,8 +21,8 @@ function createPaymentUrl(amount, ipAddr, orderId, returnUrl) {
         'vnp_TmnCode': tmnCode,
         'vnp_Locale': 'vn',
         'vnp_CurrCode': currCode,
-        'vnp_TxnRef': orderId,
-        'vnp_OrderInfo': `Thanh toán đơn hàng ${orderId}`,
+        'vnp_TxnRef': TxnRef,
+        'vnp_OrderInfo': `Thanh toán đơn hàng ${TxnRef}`,
         'vnp_OrderType': 'other',
         'vnp_Amount': amount * 100,
         'vnp_ReturnUrl': returnUrl,
@@ -38,23 +40,6 @@ function createPaymentUrl(amount, ipAddr, orderId, returnUrl) {
     return vnpUrl;
 }
 
-function verifyChecksum(vnp_Params) {
-    console.log('vnp_Params1', vnp_Params);
-    const secureHash = vnp_Params['vnp_SecureHash'];
-    delete vnp_Params['vnp_SecureHash'];
-    delete vnp_Params['vnp_SecureHashType'];
-
-    vnp_Params = sortObject(vnp_Params);
-    console.log('vnp_Params2', vnp_Params);
-    const secretKey = config.vnp_HashSecret;
-    const signData = querystring.stringify(vnp_Params, { encode: false });
-    const hmac = crypto.createHmac("sha512", secretKey);
-    const signed = hmac.update(Buffer.from(signData, 'utf-8')).digest("hex");
-    console.log('signed', signed);
-    console.log('secureHash', secureHash);
-    return secureHash === signed;
-}
-
 function sortObject(obj) {
     const sorted = {};
     const keys = Object.keys(obj).sort();
@@ -64,18 +49,5 @@ function sortObject(obj) {
     return sorted;
 }
 
-const updatePaymentStatus = async (orderId, rspCode) => {
-    let order = await Order.findById(orderId);
-    if (!order)
-        throw new Error('Đơn hàng không tồn tại');
-    if (rspCode === '00') {
-        order.paymentStatus = 'PAID';
-    }
-    else {
-        order.paymentStatus = 'FAILED';
-    }
-    let rs = await order.save();
-    return rs;
-}
 
-module.exports = { createPaymentUrl, verifyChecksum, updatePaymentStatus };
+module.exports = { createPaymentUrl };
