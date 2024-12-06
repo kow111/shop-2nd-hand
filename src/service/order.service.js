@@ -146,6 +146,9 @@ const changeOrderPaymentStatusService = async (orderId, status) => {
       throw new Error("Không tìm thấy đơn hàng");
     }
     order.paymentStatus = status;
+    if (status === "DELIVERED") {
+      order.paymentStatus = "PAID";
+    }
     await order.save();
     return order;
   } catch (error) {

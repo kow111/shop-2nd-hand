@@ -34,9 +34,11 @@ const postCreateOrder = async (req, res) => {
       discountCode,
     };
     let rs = await createOrderService(data);
-    addChangeOrderStatusJob({
-      orderId: rs._id,
-    });
+    if (paymentMethod === "COD") {
+      addChangeOrderStatusJob({
+        orderId: rs._id,
+      });
+    }
     await updateCartItemService(userId, {
       deleteProduct: products.map((product) => product.productId),
     });
