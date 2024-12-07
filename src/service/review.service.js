@@ -30,7 +30,7 @@ const updateReviewService = async (review) => {
 
 const getAllReviewService = async (filter = {}) => {
   try {
-    const limit = 10;
+    const limit = 6;
     let skip = 0;
     if (filter.page) {
       skip = (filter.page - 1) * limit;
