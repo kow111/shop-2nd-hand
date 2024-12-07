@@ -39,6 +39,7 @@ const getAllReviewService = async (filter = {}) => {
     const totalPages = Math.ceil(totalItems / limit);
     let rs = await Review.find()
       .populate("user")
+      .populate("product")
       .limit(limit)
       .skip(skip)
       .sort({ createdAt: -1 });
