@@ -1,6 +1,4 @@
 const Review = require("../model/review.model");
-const { getDiscountUserDontHaveService } = require("./discount.service");
-const { addDiscountService } = require("./user.service");
 
 const getReviewByProductService = async (productId) => {
   try {
@@ -30,4 +28,32 @@ const updateReviewService = async (review) => {
   }
 };
 
-module.exports = { createReviewService, getReviewByProductService, updateReviewService };
+const getAllReviewService = async (filter = {}) => {
+  try {
+    const limit = 10;
+    let skip = 0;
+    if (filter.page) {
+      skip = (filter.page - 1) * limit;
+    }
+    const totalItems = await Review.countDocuments();
+    const totalPages = Math.ceil(totalItems / limit);
+    let rs = await Review.find()
+      .populate("user")
+      .limit(limit)
+      .skip(skip)
+      .sort({ createdAt: -1 });
+    return {
+      rs,
+      totalPages,
+    };
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
+module.exports = {
+  createReviewService,
+  getReviewByProductService,
+  updateReviewService,
+  getAllReviewService,
+};

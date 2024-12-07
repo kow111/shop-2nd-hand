@@ -3,6 +3,7 @@ const {
   createReviewService,
   getReviewByProductService,
   updateReviewService,
+  getAllReviewService,
 } = require("../service/review.service");
 
 const getReviewByProduct = async (req, res) => {
@@ -15,6 +16,19 @@ const getReviewByProduct = async (req, res) => {
     });
   } catch (error) {
     res.status(400).json({ message: error.message });
+  }
+};
+
+const getAllReview = async (req, res) => {
+  try {
+    const page = req.query.page;
+    const rs = await getAllReviewService({ page });
+    res.status(200).json({
+      DT: rs,
+      EM: "Lấy tất cả review thành công",
+    });
+  } catch (error) {
+    res.status(400).json({ DT: null, EM: error.message });
   }
 };
 
@@ -55,5 +69,9 @@ const putUpdateReview = async (req, res) => {
   }
 };
 
-
-module.exports = { postCreateReview, getReviewByProduct, putUpdateReview };
+module.exports = {
+  postCreateReview,
+  getReviewByProduct,
+  putUpdateReview,
+  getAllReview,
+};
