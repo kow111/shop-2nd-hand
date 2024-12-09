@@ -227,34 +227,14 @@ const getProductUserPurchasedService = async (userId) => {
 };
 
 
-const getOrderByAdminService = async (filter = {}) => {
+const getOrderByAdminService = async () => {
   try {
-    const limit = 10;
-    let skip = 0;
-
-    if (filter.page) {
-      skip = (filter.page - 1) * limit;
-    }
-
-    const query = {};
-
-    if (filter.status) {
-      query.status = filter.status;
-    }
-
-    const totalItems = await Order.countDocuments(query);
-    const totalPages = Math.ceil(totalItems / limit);
-
-    let orders = await Order.find(query)
+    let orders = await Order.find()
       .populate("products.product")
       .populate("discountCode")
-      .limit(limit)
-      .skip(skip)
       .sort({ createdAt: -1 });
-
     return {
       orders,
-      totalPages,
     };
   } catch (error) {
     throw new Error(error.message);
