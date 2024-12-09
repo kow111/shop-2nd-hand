@@ -2,24 +2,26 @@ const vnpayService = require('../service/payment.service');
 const config = require('../config/vnpay.config.json');
 const querystring = require('qs');
 const crypto = require('crypto');
-const Order = require('../model/order.model');
+const Order = require('../model/order.model.js');
+const { addChangeOrderProcessingJob } = require("../queues/order.queue");
 
-function createPaymentUrl(req, res) {
+async function createPaymentUrl(req, res) {
     const { amount, orderId, returnUrl } = req.body;
     const ipAddr = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
     try {
-        const paymentUrl = vnpayService.createPaymentUrl(amount, ipAddr, orderId, returnUrl);
+        const paymentUrl = await vnpayService.createPaymentUrl(amount, ipAddr, orderId, returnUrl);
+        addChangeOrderProcessingJob({ orderId: orderId, });
         return res.status(200).json({
             DT: paymentUrl,
             EM: "Tạo URL thanh toán thành công",
         });
     } catch (error) {
-        res.status(400).json({ message: "Có lỗi xảy ra trong quá trình tạo URL thanh toán." + error });
+        res.status(400).json({ message: "Lỗi: " + error });
     }
 }
 
 async function vnpayIPN(req, res) {
-    console.log('IPN: ', req.query);
+    // console.log('IPN: ', req.query);
     let vnp_Params = req.query;
     let secureHash = vnp_Params['vnp_SecureHash'];
 
@@ -42,11 +44,13 @@ async function vnpayIPN(req, res) {
                 if (order.paymentStatus == "PENDING") {
                     if (rspCode == "00") {
                         order.paymentStatus = 'PAID';
+                        order.isProcessing = false;
                         order.save();
                         res.status(200).json({ RspCode: '00', Message: 'Confirm Success' })
                     }
                     else {
                         order.paymentStatus = 'FAILED';
+                        order.isProcessing = false;
                         order.save();
                         res.status(200).json({ RspCode: '00', Message: 'Confirm Success' })
                     }

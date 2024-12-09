@@ -14,6 +14,7 @@ const orderSchema = new mongoose.Schema({
         required: true,
       },
       quantity: { type: Number, required: true },
+      priceAtCreate: { type: Number },
     },
   ],
   totalAmount: { type: Number, required: true },
@@ -36,6 +37,7 @@ const orderSchema = new mongoose.Schema({
     enum: ["PENDING", "PAID", "FAILED"],
     default: "PENDING",
   },
+  isProcessing: { type: Boolean, default: false },
   createdAt: { type: Date, default: Date.now },
 });
 

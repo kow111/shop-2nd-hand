@@ -52,6 +52,7 @@ const createOrderService = async (data) => {
           products: products.map((item) => ({
             product: item.productId,
             quantity: item.quantity,
+            priceAtCreate: item.priceAtCreate,
           })),
           totalAmount,
           paymentMethod,
@@ -59,6 +60,7 @@ const createOrderService = async (data) => {
           name,
           phone,
           address,
+          isProcessing: false,
         },
       ],
       { session }
@@ -138,6 +140,7 @@ const changeOrderStatusService = async (orderId, status) => {
     throw new Error(error.message);
   }
 };
+
 
 const changeOrderPaymentStatusService = async (orderId, status) => {
   try {
@@ -246,6 +249,16 @@ const isOrderCanceled = async (orderId) => {
   return order.status === "CANCELLED";
 };
 
+const changeOrderProcessingService = async (orderId) => {
+  try {
+    let order = await Order.findByIdAndUpdate(orderId, { isProcessing: false });
+    console.log(order);
+    return order;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
 module.exports = {
   createOrderService,
   cancelOrderService,
@@ -256,4 +269,5 @@ module.exports = {
   getOrderByAdminService,
   changeOrderPaymentStatusService,
   isOrderCanceled,
+  changeOrderProcessingService,
 };
