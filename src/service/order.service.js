@@ -60,7 +60,6 @@ const createOrderService = async (data) => {
           name,
           phone,
           address,
-          isProcessing: false,
         },
       ],
       { session }
@@ -249,16 +248,6 @@ const isOrderCanceled = async (orderId) => {
   return order.status === "CANCELLED";
 };
 
-const changeOrderProcessingService = async (orderId) => {
-  try {
-    let order = await Order.findByIdAndUpdate(orderId, { isProcessing: false });
-    console.log(order);
-    return order;
-  } catch (error) {
-    throw new Error(error.message);
-  }
-};
-
 module.exports = {
   createOrderService,
   cancelOrderService,
@@ -269,5 +258,4 @@ module.exports = {
   getOrderByAdminService,
   changeOrderPaymentStatusService,
   isOrderCanceled,
-  changeOrderProcessingService,
 };

@@ -13,15 +13,6 @@ async function createPaymentUrl(amount, ipAddr, orderId, returnUrl) {
         if (order.paymentStatus == 'PAID') {
             throw new Error('Đơn hàng đã được thanh toán');
         }
-        if (order.paymentStatus == 'FAILED') {
-            throw new Error('Đơn hàng đã thanh toán thất bại. Vui lòng liên hệ admin để được hỗ trợ');
-        }
-        if (order.isProcessing) {
-            throw new Error('Đơn hàng đang được xử lý, vui lòng đợi');
-        }
-
-        order.isProcessing = true;
-        await order.save();
 
         const tmnCode = config.vnp_TmnCode;
         const secretKey = config.vnp_HashSecret;

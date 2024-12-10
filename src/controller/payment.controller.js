@@ -3,14 +3,12 @@ const config = require('../config/vnpay.config.json');
 const querystring = require('qs');
 const crypto = require('crypto');
 const Order = require('../model/order.model.js');
-const { addChangeOrderProcessingJob } = require("../queues/order.queue");
 
 async function createPaymentUrl(req, res) {
     const { amount, orderId, returnUrl } = req.body;
     const ipAddr = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
     try {
         const paymentUrl = await vnpayService.createPaymentUrl(amount, ipAddr, orderId, returnUrl);
-        addChangeOrderProcessingJob({ orderId: orderId, });
         return res.status(200).json({
             DT: paymentUrl,
             EM: "Tạo URL thanh toán thành công",
@@ -44,13 +42,11 @@ async function vnpayIPN(req, res) {
                 if (order.paymentStatus == "PENDING") {
                     if (rspCode == "00") {
                         order.paymentStatus = 'PAID';
-                        order.isProcessing = false;
                         order.save();
                         res.status(200).json({ RspCode: '00', Message: 'Confirm Success' })
                     }
                     else {
                         order.paymentStatus = 'FAILED';
-                        order.isProcessing = false;
                         order.save();
                         res.status(200).json({ RspCode: '00', Message: 'Confirm Success' })
                     }

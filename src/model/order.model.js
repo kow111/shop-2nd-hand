@@ -37,7 +37,6 @@ const orderSchema = new mongoose.Schema({
     enum: ["PENDING", "PAID", "FAILED"],
     default: "PENDING",
   },
-  isProcessing: { type: Boolean, default: false },
   createdAt: { type: Date, default: Date.now },
 });
 
