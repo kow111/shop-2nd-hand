@@ -26,7 +26,7 @@ const updateCartItemService = async (userId, data) => {
     const product = await Product.findById(data.productId);
     if (data.quantity > product.quantity) {
       throw new Error(
-        `The quantity of product ${product.productName} is not enough. The current quantity is ${product.quantity}.`
+        `Số lượng sản phẩm ${product.productName} không đủ. Số lượng còn lại là ${product.quantity}.`
       );
     }
 

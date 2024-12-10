@@ -5,7 +5,7 @@ const User = require("../model/user.model");
 const getRevenueChartService = async (fromDate, toDate) => {
   try {
     if (!fromDate || !toDate) {
-      throw new Error("fromDate and toDate are required");
+      throw new Error("Vui lòng chọn đủ ngày bắt đầu và ngày kết thúc");
     }
 
     const startDate = new Date(fromDate);
@@ -50,7 +50,7 @@ const getRevenueChartService = async (fromDate, toDate) => {
 const getRevenueChartByMonthService = async (year) => {
   try {
     if (!year) {
-      throw new Error("Year is required");
+      throw new Error("Vui lòng chọn năm");
     }
 
     let months = [];
