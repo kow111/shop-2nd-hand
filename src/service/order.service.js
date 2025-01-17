@@ -36,7 +36,6 @@ const createOrderService = async (data) => {
           pick_district: "Quận Bình Thạnh",
           weight: 1000,
           value: totalAmount,
-          deliver_option: "xteam",
           province: addressArr[addressArr.length - 1],
           district: addressArr[addressArr.length - 3],
         },
