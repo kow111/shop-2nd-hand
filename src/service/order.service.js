@@ -1,3 +1,4 @@
+const { default: axios } = require("axios");
 const CancelRequest = require("../model/cancel.request.model");
 const Discount = require("../model/discount.model");
 const Order = require("../model/order.model");
@@ -7,8 +8,11 @@ const { addNotificationJob } = require("../queues/notification.queue");
 const { applyDiscountService } = require("./discount.service");
 const mongoose = require("mongoose");
 
+const API_SERVICE =
+  "https://services.giaohangtietkiem.vn/services/shipment/fee";
+
 const createOrderService = async (data) => {
-  const session = await mongoose.startSession(); // Khởi tạo session
+  const session = await mongoose.startSession();
   session.startTransaction();
 
   try {
@@ -23,7 +27,30 @@ const createOrderService = async (data) => {
       discountCode,
     } = data;
 
-    // Kiểm tra và cập nhật số lượng sản phẩm
+    let shippingFee = 0;
+    if (address) {
+      const addressArr = address.split(",");
+      const rsAPI = await axios.get(API_SERVICE, {
+        params: {
+          pick_province: "Thành phố Hồ Chí Minh",
+          pick_district: "Quận Bình Thạnh",
+          weight: 1000,
+          value: totalAmount,
+          deliver_option: "xteam",
+          province: addressArr[addressArr.length - 1],
+          district: addressArr[addressArr.length - 3],
+        },
+        headers: {
+          Token: process.env.API_KEY,
+        },
+      });
+
+      if (rsAPI.success === false) {
+        throw new Error(rsAPI.message);
+      }
+      shippingFee = rsAPI.data.fee.fee;
+    }
+
     for (const item of products) {
       const product = await Product.findById(item.productId).session(session);
 
@@ -37,7 +64,6 @@ const createOrderService = async (data) => {
       await product.save({ session });
     }
 
-    // Áp dụng mã giảm giá nếu có
     if (discountCode) {
       await applyDiscountService(discountCode, userId);
     } else {
@@ -60,6 +86,7 @@ const createOrderService = async (data) => {
           name,
           phone,
           address,
+          shippingFee,
         },
       ],
       { session }
@@ -140,7 +167,6 @@ const changeOrderStatusService = async (orderId, status) => {
   }
 };
 
-
 const changeOrderPaymentStatusService = async (orderId, status) => {
   try {
     let order = await Order.findById(orderId);
@@ -192,7 +218,9 @@ const getProductUserPurchasedService = async (userId) => {
     const reviews = await Review.find({ user: userId }).populate("product");
 
     // Tập hợp ID của các sản phẩm đã được review
-    const reviewedProductIds = new Set(reviews.map((review) => review.product._id.toString()));
+    const reviewedProductIds = new Set(
+      reviews.map((review) => review.product._id.toString())
+    );
 
     const productSet = new Set(); // Dùng để tránh thêm trùng sản phẩm
     const productsWithoutReview = []; // Danh sách sản phẩm chưa review
@@ -210,7 +238,10 @@ const getProductUserPurchasedService = async (userId) => {
             const userReview = reviews.find(
               (review) => review.product._id.toString() === productId
             );
-            productsWithReview.push({ product: item.product, review: userReview });
+            productsWithReview.push({
+              product: item.product,
+              review: userReview,
+            });
           } else {
             // Nếu sản phẩm chưa review, thêm vào danh sách chưa review
             productsWithoutReview.push(item.product);
@@ -227,7 +258,6 @@ const getProductUserPurchasedService = async (userId) => {
     throw new Error(error.message);
   }
 };
-
 
 const getOrderByAdminService = async () => {
   try {

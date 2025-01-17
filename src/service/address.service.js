@@ -1,7 +1,7 @@
 const Address = require("../model/address.model");
 
 const createAddressService = async (data) => {
-  console.log(data);
+  // console.log(data);
   try {
     // Lấy danh sách địa chỉ của người dùng
     const existingAddresses = await getAddressByUserService(data.user);
@@ -48,7 +48,9 @@ const updateAddressService = async (id, data) => {
         existingAddress.ward === data.ward
     );
     if (addressExists) {
-      throw new Error("Địa chỉ đã tồn tại, vui lòng không trùng tên, số điện thoại, địa chỉ, phường, quận, thành phố.");
+      throw new Error(
+        "Địa chỉ đã tồn tại, vui lòng không trùng tên, số điện thoại, địa chỉ, phường, quận, thành phố."
+      );
     }
     let address = await Address.findByIdAndUpdate(id, data);
     return address;
