@@ -22,7 +22,9 @@ const getStockByBranchAndProductService = async (branchId, productId) => {
 
 const getStockByProductService = async (productId) => {
   try {
-    const stock = await BranchStock.find({ product: productId });
+    const stock = await BranchStock.find({ product: productId }).populate(
+      "branch"
+    );
     return stock;
   } catch (error) {
     throw new Error(error.message);
@@ -39,11 +41,11 @@ const updateStockService = async (branchId, productId, quantity) => {
       const newStock = await BranchStock.create({
         branch: branchId,
         product: productId,
-        quantity,
+        quantity: Number(quantity),
       });
       return newStock;
     } else {
-      stock.quantity += quantity;
+      stock.quantity += Number(quantity);
       await stock.save();
     }
     return stock;
