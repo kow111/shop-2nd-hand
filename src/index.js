@@ -23,6 +23,7 @@ const dashboardRoute = require("./route/dashboard.route");
 const cancelRequestRoute = require("./route/cancel.request.route");
 const bannerRoute = require("./route/banner.route");
 const branchRoute = require("./route/branch.route");
+const branchStockRoute = require("./route/branch.stock.route");
 
 dotenv.config();
 
@@ -50,6 +51,7 @@ app.use("/api/v1/dashboard", dashboardRoute);
 app.use("/api/v1/cancel-request", cancelRequestRoute);
 app.use("/api/v1/banner", bannerRoute);
 app.use("/api/v1/branch", branchRoute);
+app.use("/api/v1/branch-stock", branchStockRoute);
 
 // Khởi tạo Socket.io
 initSocket(server);
