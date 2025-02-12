@@ -21,6 +21,7 @@ const postCreateOrder = async (req, res) => {
       phone,
       address,
       discountCode,
+      branchId,
     } = req.body;
     const userId = req.user.userId;
     let data = {
@@ -32,6 +33,7 @@ const postCreateOrder = async (req, res) => {
       phone,
       address,
       discountCode,
+      branchId,
     };
     let rs = await createOrderService(data);
     if (paymentMethod === "COD") {

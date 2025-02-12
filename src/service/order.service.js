@@ -7,6 +7,7 @@ const Review = require("../model/review.model");
 const { addNotificationJob } = require("../queues/notification.queue");
 const { applyDiscountService } = require("./discount.service");
 const mongoose = require("mongoose");
+const BranchStock = require("../model/branch.stock.model");
 
 const API_SERVICE =
   "https://services.giaohangtietkiem.vn/services/shipment/fee";
@@ -25,8 +26,8 @@ const createOrderService = async (data) => {
       phone,
       address,
       discountCode,
+      branchId,
     } = data;
-
     let shippingFee = 0;
     if (address) {
       const addressArr = address.split(",");
@@ -51,16 +52,27 @@ const createOrderService = async (data) => {
     }
 
     for (const item of products) {
-      const product = await Product.findById(item.productId).session(session);
-
-      if (!product || product.quantity < item.quantity) {
+      // const product = await Product.findById(item.productId).session(session);
+      const branchStock = await BranchStock.findOne({
+        branch: branchId,
+        product: item.productId,
+      });
+      if (!branchStock || branchStock.quantity < item.quantity) {
         throw new Error(
-          `Sản phẩm ${product.productName} không đủ số lượng để đặt hàng, số lượng sản phẩm hiện có: ${product.quantity}`
+          "Sản phẩm không tồn tại trong kho chi nhanh hoặc số lượng không đủ"
         );
       }
+      branchStock.quantity -= item.quantity;
+      await branchStock.save({ session });
 
-      product.quantity -= item.quantity;
-      await product.save({ session });
+      // if (!product || product.quantity < item.quantity) {
+      //   throw new Error(
+      //     `Sản phẩm ${product.productName} không đủ số lượng để đặt hàng, số lượng sản phẩm hiện có: ${product.quantity}`
+      //   );
+      // }
+
+      // product.quantity -= item.quantity;
+      // await product.save({ session });
     }
 
     if (discountCode) {
