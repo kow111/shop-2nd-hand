@@ -7,6 +7,7 @@ const productchema = new mongoose.Schema({
   category: [{ type: mongoose.Schema.Types.ObjectId, ref: "Category" }],
   quantity: { type: Number, required: true },
   images: { type: [String], default: [] },
+  original_price: { type: Number, default: 0 },
   price: { type: Number, required: true },
   color: { type: mongoose.Schema.Types.ObjectId, ref: "Color", required: true },
   condition: {

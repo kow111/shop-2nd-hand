@@ -9,6 +9,7 @@ const createProductService = async (data) => {
       category,
       quantity,
       images,
+      original_price,
       price,
       color,
       condition,
@@ -20,6 +21,7 @@ const createProductService = async (data) => {
       category,
       quantity,
       images,
+      original_price,
       price,
       color,
       condition,
@@ -132,6 +134,7 @@ const updateProductService = async (id, data, imageActions) => {
       if (data.size) product.size = data.size;
       if (data.category) product.category = data.category;
       if (data.quantity) product.quantity = data.quantity;
+      if (data.original_price) product.original_price = data.original_price;
       if (data.price) product.price = data.price;
       if (data.color) product.color = data.color;
       if (data.condition) product.condition = data.condition;
