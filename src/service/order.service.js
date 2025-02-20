@@ -9,9 +9,6 @@ const { applyDiscountService } = require("./discount.service");
 const mongoose = require("mongoose");
 const BranchStock = require("../model/branch.stock.model");
 
-const API_SERVICE =
-  "https://services.giaohangtietkiem.vn/services/shipment/fee";
-
 const createOrderService = async (data) => {
   const session = await mongoose.startSession();
   session.startTransaction();
@@ -27,29 +24,8 @@ const createOrderService = async (data) => {
       address,
       discountCode,
       branchId,
+      shippingFee,
     } = data;
-    let shippingFee = 0;
-    if (address) {
-      const addressArr = address.split(",");
-      const rsAPI = await axios.get(API_SERVICE, {
-        params: {
-          pick_province: "Thành phố Hồ Chí Minh",
-          pick_district: "Quận Bình Thạnh",
-          weight: 1000,
-          value: totalAmount,
-          province: addressArr[addressArr.length - 1],
-          district: addressArr[addressArr.length - 3],
-        },
-        headers: {
-          Token: process.env.API_KEY,
-        },
-      });
-
-      if (rsAPI.success === false) {
-        throw new Error(rsAPI.message);
-      }
-      shippingFee = rsAPI.data.fee.fee;
-    }
 
     for (const item of products) {
       // const product = await Product.findById(item.productId).session(session);
