@@ -4,6 +4,7 @@ const {
   getDashboardStats,
   getOrderStatusDistribution,
   getRevenueChartByMonth,
+  getSellerCategory,
 } = require("../controller/dashboard.controller");
 const { auth, requireAdmin } = require("../middleware/auth");
 const routerAPI = express.Router();
@@ -22,5 +23,6 @@ routerAPI.get(
   requireAdmin,
   getOrderStatusDistribution
 );
+routerAPI.get("/seller-category", auth, requireAdmin, getSellerCategory);
 
 module.exports = routerAPI;

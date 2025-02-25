@@ -1,3 +1,4 @@
+const Category = require("../model/category.model");
 const Order = require("../model/order.model");
 const Product = require("../model/product.model");
 const User = require("../model/user.model");
@@ -140,9 +141,52 @@ const getDashboardStatsService = async () => {
   }
 };
 
+const getSellerCategoryByService = async (fromDate, toDate) => {
+  try {
+    if (!fromDate || !toDate) {
+      throw new Error("Vui lòng chọn đủ ngày bắt đầu và ngày kết thúc");
+    }
+
+    let orders = await Order.find({
+      status: { $in: ["CONFIRMED", "SHIPPED", "DELIVERED"] },
+      createdAt: {
+        $gte: new Date(fromDate),
+        $lte: new Date(toDate),
+      },
+    }).populate({
+      path: "products.product",
+      populate: { path: "category", select: "name" },
+    });
+    let categories = await Category.find();
+    let categorySales = {};
+
+    categories.forEach((category) => {
+      categorySales[category.name] = 0;
+    });
+
+    orders.forEach((order) => {
+      order.products.forEach((item) => {
+        if (item.product && Array.isArray(item.product.category)) {
+          item.product.category.forEach((category) => {
+            if (category?.name) {
+              categorySales[category.name] =
+                (categorySales[category.name] || 0) + item.quantity;
+            }
+          });
+        }
+      });
+    });
+
+    return categorySales;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
 module.exports = {
   getRevenueChartService,
   getDashboardStatsService,
   getOrderStatusDistributionService,
   getRevenueChartByMonthService,
+  getSellerCategoryByService,
 };

@@ -3,6 +3,7 @@ const {
   getDashboardStatsService,
   getOrderStatusDistributionService,
   getRevenueChartByMonthService,
+  getSellerCategoryByService,
 } = require("../service/dashboard.service");
 
 const getRevenueChart = async (req, res) => {
@@ -12,6 +13,19 @@ const getRevenueChart = async (req, res) => {
     return res.status(200).json({
       DT: { dates, revenues },
       EM: "Lấy dữ liệu biểu đồ doanh thu thành công",
+    });
+  } catch (error) {
+    return res.status(400).json({ message: error.message });
+  }
+};
+
+const getSellerCategory = async (req, res) => {
+  try {
+    const { fromDate, toDate } = req.query;
+    const sellerCategory = await getSellerCategoryByService(fromDate, toDate);
+    return res.status(200).json({
+      DT: sellerCategory,
+      EM: "Lấy dữ liệu danh mục mua bán thành công",
     });
   } catch (error) {
     return res.status(400).json({ message: error.message });
@@ -57,4 +71,5 @@ module.exports = {
   getDashboardStats,
   getOrderStatusDistribution,
   getRevenueChartByMonth,
+  getSellerCategory,
 };
