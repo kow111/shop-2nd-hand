@@ -18,6 +18,10 @@ const discountSchema = new mongoose.Schema({
       ref: "User",
     },
   ],
+  type: {
+    type: String,
+    enum: ["SHIPPING", "PRODUCT"],
+  },
 });
 
 const Discount = mongoose.model("Discount", discountSchema);

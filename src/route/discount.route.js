@@ -14,7 +14,6 @@ const routerAPI = express.Router();
 routerAPI.get("/code", auth, getDiscountByCode);
 routerAPI.get("/", auth, requireAdmin, getDiscount);
 routerAPI.post("/", auth, requireAdmin, postCreateDiscount);
-routerAPI.get("/apply", auth, getApplyDiscount);
 routerAPI.get("/get-discount-user", auth, getDiscountUserDontHave);
 routerAPI.get("/all", getAllDiscount);
 

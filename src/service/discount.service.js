@@ -75,11 +75,18 @@ const getDiscountService = async (filter = {}) => {
     if (filter.page) {
       skip = (filter.page - 1) * limit;
     }
-
+    const query = {};
+    if (filter.type) {
+      if (filter.type === "PRODUCT") {
+        query.$or = [{ type: "PRODUCT" }, { type: null }];
+      } else {
+        query.type = filter.type;
+      }
+    }
     const totalItems = await Discount.countDocuments();
     const totalPages = Math.ceil(totalItems / limit);
 
-    let rs = await Discount.find().skip(skip).limit(limit);
+    let rs = await Discount.find(query).skip(skip).limit(limit);
     return {
       discounts: rs,
       totalPages,

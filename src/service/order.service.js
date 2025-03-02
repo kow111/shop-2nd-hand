@@ -52,10 +52,15 @@ const createOrderService = async (data) => {
     }
 
     if (discountCode) {
-      await applyDiscountService(discountCode, userId);
-    } else {
-      discountCode = null;
+      discountCode.map(async (item) => {
+        await applyDiscountService(item, userId);
+      });
     }
+    // if (discountCode) {
+    //   await applyDiscountService(discountCode, userId);
+    // } else {
+    //   discountCode = null;
+    // }
 
     // Tạo đơn hàng trong session
     const order = await Order.create(
