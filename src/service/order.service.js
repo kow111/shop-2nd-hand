@@ -125,13 +125,15 @@ const cancelOrderService = async (orderId, userId) => {
       order.discountCode !== null &&
       order.discountCode !== ""
     ) {
-      const discount = await Discount.findById(order.discountCode);
-      if (discount) {
-        discount.usersUsed = discount.usersUsed.filter(
-          (user) => user.toString() !== userId.toString()
-        );
-        await discount.save();
-      }
+      order.discountCode.map(async (item) => {
+        const discount = await Discount.findById(item);
+        if (discount) {
+          discount.usersUsed = discount.usersUsed.filter(
+            (user) => user.toString() !== userId.toString()
+          );
+          await discount.save();
+        }
+      });
     }
     await order.save();
     return order;
