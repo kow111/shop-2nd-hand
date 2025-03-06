@@ -3,6 +3,7 @@ const {
   updateStockService,
   getStockByProductService,
   getStockByBranchAndProductService,
+  getStockByBranchAndManyProductService,
 } = require("../service/branch.stock.service");
 
 const getStockByBranch = async (req, res) => {
@@ -40,7 +41,7 @@ const getStockByProduct = async (req, res) => {
 const getStockByBranchAndProduct = async (req, res) => {
   try {
     const { branchId, productId } = req.params;
-    const stock = await getStockByBranchAndProductService(branchId, productId);
+    const stock = await getStockByBranchAndProductService({ branchId, productId });
     return res.status(200).json({
       DT: stock,
       EM: "Lấy sản phẩm thành công",
@@ -52,6 +53,22 @@ const getStockByBranchAndProduct = async (req, res) => {
     });
   }
 };
+
+const getStockByBranchAndManyProduct = async (req, res) => {
+  try {
+    const { branchId, productIds } = req.query;
+    const stock = await getStockByBranchAndManyProductService(branchId, productIds);
+    return res.status(200).json({
+      DT: stock,
+      EM: "Lấy sản phẩm thành công",
+    });
+  } catch (error) {
+    return res.status(400).json({
+      DT: null,
+      EM: error.message,
+    });
+  }
+}
 
 const updateStock = async (req, res) => {
   try {
@@ -75,4 +92,5 @@ module.exports = {
   updateStock,
   getStockByProduct,
   getStockByBranchAndProduct,
+  getStockByBranchAndManyProduct,
 };

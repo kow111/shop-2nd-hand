@@ -17,6 +17,21 @@ const orderSchema = new mongoose.Schema({
       priceAtCreate: { type: Number },
     },
   ],
+  pendingProducts: [
+    {
+      product: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Product",
+      },
+      quantity: { type: Number },
+      priceAtCreate: { type: Number },
+    },
+  ],
+  branchId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Branch",
+    required: true,
+  },
   shippingFee: { type: Number },
   totalAmount: { type: Number, required: true },
   status: {
