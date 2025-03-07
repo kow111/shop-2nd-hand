@@ -71,7 +71,7 @@ const createOrderService = async (data) => {
           user: userId,
           products: availableProducts,
           pendingProducts,
-          branchId,
+          branch: branchId,
           totalAmount,
           paymentMethod,
           discountCode,
@@ -181,6 +181,7 @@ const changeOrderPaymentStatusService = async (orderId, status) => {
 const getOrderByUserService = async (userId) => {
   try {
     let orders = await Order.find({ user: userId })
+      .populate("branch")
       .populate("products.product")
       .populate("pendingProducts.product")
       .populate("discountCode");
@@ -193,7 +194,9 @@ const getOrderByUserService = async (userId) => {
 const getOrderByIdService = async (orderId) => {
   try {
     let order = await Order.findById(orderId)
+      .populate("branch")
       .populate("products.product")
+      .populate("pendingProducts.product")
       .populate("discountCode");
     return order;
   } catch (error) {
@@ -207,7 +210,8 @@ const getProductUserPurchasedService = async (userId) => {
     const orders = await Order.find({
       user: userId,
       status: "DELIVERED",
-    }).populate("products.product");
+    }).populate("products.product")
+      .populate("pendingProducts.product");
 
     // Lấy danh sách review của user
     const reviews = await Review.find({ user: userId }).populate("product");
@@ -258,6 +262,8 @@ const getOrderByAdminService = async () => {
   try {
     let orders = await Order.find()
       .populate("products.product")
+      .populate("pendingProducts.product")
+      .populate("branch")
       .populate("discountCode")
       .sort({ createdAt: -1 });
     return {
