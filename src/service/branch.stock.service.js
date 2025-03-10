@@ -4,7 +4,7 @@ const mongoose = require("mongoose");
 
 const getStockByBranchService = async (branchId) => {
   try {
-    const stock = await BranchStock.find({ branch: branchId });
+    const stock = await BranchStock.find({ branch: branchId }).populate("product");
     return stock;
   } catch (error) {
     throw new Error(error.message);

@@ -75,7 +75,7 @@ const getProductService = async (filter = {}) => {
       if (filter.selectedOptionStock == 0) {
         query.quantity = 0;
       } else if (filter.selectedOptionStock == 1) {
-        query.quantity = { $lt: 5 };
+        query.quantity = { $lt: 10 };
       } else if (filter.selectedOptionStock == 2) {
         query.quantity = { $gt: 0 };
       }

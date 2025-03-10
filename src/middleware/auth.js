@@ -26,7 +26,7 @@ const auth = (req, res, next) => {
   }
 };
 const requireAdmin = (req, res, next) => {
-  if (req.user && req.user.is_admin === true) {
+  if (req.user && (req.user.is_admin === true || (req.user.branch && req.user.branch.length > 0))) {
     next();
   } else {
     res
