@@ -83,7 +83,7 @@ const getDiscountService = async (filter = {}) => {
         query.type = filter.type;
       }
     }
-    const totalItems = await Discount.countDocuments();
+    const totalItems = await Discount.countDocuments(query);
     const totalPages = Math.ceil(totalItems / limit);
 
     let rs = await Discount.find(query).skip(skip).limit(limit);
@@ -120,12 +120,24 @@ const getDiscountUserDontHaveService = async (userId) => {
   }
 };
 
-const getAllDiscountsService = async () => {
+const getAllDiscountsService = async (filter = {}) => {
   try {
-    //get all valid discount
-    const discounts = await Discount.find({
+    const query = { $and: [] };
+
+    if (filter.type) {
+      if (filter.type === "PRODUCT") {
+        query.$and.push({ $or: [{ type: "PRODUCT" }, { type: null }] });
+      } else {
+        query.$and.push({ type: filter.type });
+      }
+    }
+    query.$and.push({
       $or: [{ expiredAt: { $gt: new Date() } }, { expiredAt: null }],
     });
+
+    const finalQuery = query.$and.length > 0 ? query : {};
+
+    const discounts = await Discount.find(finalQuery);
     return discounts;
   } catch (error) {
     throw new Error(error.message);

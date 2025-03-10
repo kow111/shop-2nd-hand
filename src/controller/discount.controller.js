@@ -80,7 +80,8 @@ const getDiscountUserDontHave = async (req, res) => {
 
 const getAllDiscount = async (req, res) => {
   try {
-    let rs = await getAllDiscountsService();
+    const { type } = req.query;
+    let rs = await getAllDiscountsService({ type });
     return res.status(200).json({
       DT: rs,
       EM: "Lấy tất cả mã giảm giá thành công",
