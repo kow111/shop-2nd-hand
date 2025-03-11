@@ -1,4 +1,5 @@
 const BranchStock = require("../model/branch.stock.model");
+const Product = require("../model/product.model");
 const mongoose = require("mongoose");
 
 
@@ -84,22 +85,33 @@ const getStockByProductService = async (productId) => {
 
 const updateStockService = async (branchId, productId, quantity) => {
   try {
-    const stock = await BranchStock.findOne({
-      branch: branchId,
-      product: productId,
-    });
-    if (!stock) {
-      const newStock = await BranchStock.create({
+    const product = await Product.findById(productId);
+    if (product.quantity < quantity) {
+      throw new Error("Số lượng sản phẩm không đủ");
+    }
+    if (!product.stock || product.stock.length === 0) {
+      product.stock = [];
+      product.stock.push({
         branch: branchId,
-        product: productId,
         quantity: Number(quantity),
       });
-      return newStock;
+      product.quantity -= Number(quantity);
     } else {
-      stock.quantity += Number(quantity);
-      await stock.save();
+      const index = product.stock.findIndex(
+        (item) => item.branch.toString() === branchId
+      );
+      if (index === -1) {
+        product.stock.push({
+          branch: branchId,
+          quantity: Number(quantity),
+        });
+      } else {
+        product.stock[index].quantity += Number(quantity);
+      }
+      product.quantity -= Number(quantity);
     }
-    return stock;
+    let updateStock = await product.save();
+    return updateStock;
   } catch (error) {
     throw new Error(error.message);
   }
