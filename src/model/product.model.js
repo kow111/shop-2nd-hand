@@ -15,10 +15,6 @@ const productchema = new mongoose.Schema({
     enum: ["NEW", "LIKENEW", "VERYGOOD", "GOOD", "FAIR", "99%", "98%"],
     required: true,
   },
-  stock: [{
-    branch: { type: mongoose.Schema.Types.ObjectId, ref: "Branch" },
-    quantity: { type: Number },
-  }]
 });
 
 const Product = mongoose.model("Product", productchema);

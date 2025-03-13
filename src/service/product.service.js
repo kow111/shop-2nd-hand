@@ -101,8 +101,7 @@ const getProductService = async (filter = {}) => {
       .skip(skip)
       .sort(sort)
       .populate("category", "name")
-      .populate("color")
-      .populate("stock.branch");
+      .populate("color");
     return {
       products,
       totalPages,
