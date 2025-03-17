@@ -1,10 +1,11 @@
 const BranchStock = require("../model/branch.stock.model");
 const mongoose = require("mongoose");
 
-
 const getStockByBranchService = async (branchId) => {
   try {
-    const stock = await BranchStock.find({ branch: branchId }).populate("product");
+    const stock = await BranchStock.find({ branch: branchId }).populate(
+      "product"
+    );
     return stock;
   } catch (error) {
     throw new Error(error.message);
@@ -69,8 +70,6 @@ const getStockByBranchAndManyProductService = async (branchId, productIds) => {
   }
 };
 
-
-
 const getStockByProductService = async (productId) => {
   try {
     const stock = await BranchStock.find({ product: productId }).populate(
@@ -82,12 +81,15 @@ const getStockByProductService = async (productId) => {
   }
 };
 
-const updateStockService = async (branchId, productId, quantity) => {
+const updateStockService = async (branchId, productId, quantity, type) => {
   try {
     const stock = await BranchStock.findOne({
       branch: branchId,
       product: productId,
     });
+    if (!stock && type === "decrease") {
+      throw new Error("Sản phẩm không tồn tại trong kho");
+    }
     if (!stock) {
       const newStock = await BranchStock.create({
         branch: branchId,
@@ -96,7 +98,15 @@ const updateStockService = async (branchId, productId, quantity) => {
       });
       return newStock;
     } else {
-      stock.quantity += Number(quantity);
+      if (type === "decrease" && stock.quantity < Number(quantity)) {
+        throw new Error("Số lượng tồn kho không đủ");
+      }
+      if (type === "decrease") {
+        stock.quantity -= Number(quantity);
+      }
+      if (type === "increase") {
+        stock.quantity += Number(quantity);
+      }
       await stock.save();
     }
     return stock;

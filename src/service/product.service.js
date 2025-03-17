@@ -308,8 +308,17 @@ const updateProductService = async (id, data, imageActions) => {
       if (data.description) product.description = data.description;
       if (data.size) product.size = data.size;
       if (data.category) product.category = data.category;
+      if (data.quantity < 0) {
+        throw new Error("Số lượng sản phẩm không hợp lệ");
+      }
       if (data.quantity) product.quantity = data.quantity;
+      if (data.original_price < 0) {
+        throw new Error("Giá gốc sản phẩm không hợp lệ");
+      }
       if (data.original_price) product.original_price = data.original_price;
+      if (data.price < 0) {
+        throw new Error("Giá sản phẩm không hợp lệ");
+      }
       if (data.price) product.price = data.price;
       if (data.color) product.color = data.color;
       if (data.condition) product.condition = data.condition;
