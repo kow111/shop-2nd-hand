@@ -1,4 +1,5 @@
 const BranchStock = require("../model/branch.stock.model");
+const BranchStockRequest = require("../model/branch.stock.request.model");
 const mongoose = require("mongoose");
 
 const getStockByBranchService = async (branchId) => {
@@ -115,10 +116,24 @@ const updateStockService = async (branchId, productId, quantity, type) => {
   }
 };
 
+const createStockRequestService = async (branchId, products, userId) => {
+  try {
+    const request = await BranchStockRequest.create({
+      branch: branchId,
+      products,
+      createdBy: userId,
+    });
+    return request;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+}
+
 module.exports = {
   getStockByBranchService,
   updateStockService,
   getStockByBranchAndProductService,
   getStockByProductService,
   getStockByBranchAndManyProductService,
+  createStockRequestService,
 };
