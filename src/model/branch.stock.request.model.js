@@ -14,13 +14,13 @@ const branchStockRequestModel = new mongoose.Schema({
         },
         status: {
             type: String,
-            enum: ["pending", "transferred", "not_available"],
+            enum: ["pending", "transferred"],
             default: "pending",
         }
     }],
     status: {
         type: String,
-        enum: ["pending", "approved", "rejected"],
+        enum: ["pending", "confirm", "approved", "rejected"],
         default: "pending",
     },
     createdBy: {

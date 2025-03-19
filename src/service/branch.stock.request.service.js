@@ -22,8 +22,7 @@ const postStockRequestService = async (branch, products, userId) => {
 const getStockRequestService = async (filter = {}) => {
     try {
         let query = {};
-        console.log(filter);
-        if (filter.branch) {
+        if (filter.branch && filter.branch !== '0') {
             query.branch = new mongoose.Types.ObjectId(filter.branch);
         }
 
@@ -52,7 +51,48 @@ const getStockRequestService = async (filter = {}) => {
     }
 };
 
+const updateStockRequestStatusService = async (requestId, status) => {
+    try {
+        const request = await BranchStockRequest.findById(requestId);
+        if (!request) {
+            throw new Error("Request not found");
+        }
+        request.status = status;
+        await request.save();
+        return request;
+    } catch (error) {
+        throw new Error(error.message);
+    }
+};
+
+const updateProductStatusService = async (requestId, productId, status) => {
+    try {
+        const request = await BranchStockRequest.findById(requestId);
+        if (!request) {
+            throw new Error("Request not found");
+        }
+
+        const productIndex = request.products.findIndex(p => p.product.toString() === productId);
+        if (productIndex === -1) {
+            throw new Error("Product not found");
+        }
+
+        request.products[productIndex].status = status;
+
+        if (request.products.every(p => p.status === "transferred")) {
+            request.status = "approved";
+        }
+
+        await request.save();
+        return request;
+    } catch (error) {
+        throw new Error(error.message);
+    }
+};
+
 module.exports = {
     postStockRequestService,
-    getStockRequestService
+    getStockRequestService,
+    updateStockRequestStatusService,
+    updateProductStatusService,
 };
