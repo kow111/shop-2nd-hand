@@ -3,6 +3,7 @@ const {
     getStockRequestService,
     updateStockRequestStatusService,
     updateProductStatusService,
+    deleteStockRequestService,
 } = require('../service/branch.stock.request.service');
 
 const postStockRequest = async (req, res) => {
@@ -69,9 +70,27 @@ const updateProductStatus = async (req, res) => {
         });
     }
 }
+
+const deleteStockRequest = async (req, res) => {
+    try {
+        const requestId = req.params.id;
+        await deleteStockRequestService(requestId);
+        return res.status(200).json({
+            DT: null,
+            EM: "Xóa yêu cầu điều chuyển thành công",
+        });
+    } catch (error) {
+        return res.status(400).json({
+            DT: null,
+            EM: error.message,
+        });
+    }
+}
+
 module.exports = {
     postStockRequest,
     getStockRequest,
     updateStockRequestStatus,
     updateProductStatus,
+    deleteStockRequest,
 };

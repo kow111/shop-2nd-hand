@@ -78,10 +78,24 @@ const getUserService = async (filter = {}) => {
 
 const updateUserAdminService = async (userId, data) => {
   try {
-    const user = await User.findByIdAndUpdate({ _id: userId }, data);
+    const user = await User.findById(userId);
+
     if (!user) {
       throw new Error("Không tìm thấy người dùng");
     }
+
+    const { username, is_admin, is_verified, is_active, branch, image } = data;
+
+    user.username = username || user.username;
+    user.is_admin = is_admin || user.is_admin;
+    user.is_verified = is_verified || user.is_verified;
+    user.is_active = is_active || user.is_active;
+    user.image = image || user.image;
+    if (branch && branch.length > 0) {
+      user.branch = JSON.parse(branch);
+    }
+    await user.save();
+
     return user;
   } catch (err) {
     throw new Error(err.message);

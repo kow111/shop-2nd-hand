@@ -55,7 +55,7 @@ const updateStockRequestStatusService = async (requestId, status) => {
     try {
         const request = await BranchStockRequest.findById(requestId);
         if (!request) {
-            throw new Error("Request not found");
+            throw new Error("Yêu cầu không tồn tại");
         }
         request.status = status;
         await request.save();
@@ -69,12 +69,12 @@ const updateProductStatusService = async (requestId, productId, status) => {
     try {
         const request = await BranchStockRequest.findById(requestId);
         if (!request) {
-            throw new Error("Request not found");
+            throw new Error("Yêu cầu không tồn tại");
         }
 
         const productIndex = request.products.findIndex(p => p.product.toString() === productId);
         if (productIndex === -1) {
-            throw new Error("Product not found");
+            throw new Error("Sản phẩm không tồn tại trong yêu cầu");
         }
 
         request.products[productIndex].status = status;
@@ -90,9 +90,22 @@ const updateProductStatusService = async (requestId, productId, status) => {
     }
 };
 
+const deleteStockRequestService = async (requestId) => {
+    try {
+        const request = await BranchStockRequest.findOne({ _id: requestId, status: "pending" });
+        if (!request) {
+            throw new Error("Yêu cầu không tồn tại hoặc đã được duyệt, không thể xóa");
+        }
+        await BranchStockRequest.findByIdAndDelete(requestId);
+    } catch (error) {
+        throw new Error(error.message);
+    }
+};
+
 module.exports = {
     postStockRequestService,
     getStockRequestService,
     updateStockRequestStatusService,
     updateProductStatusService,
+    deleteStockRequestService
 };
