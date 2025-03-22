@@ -33,7 +33,7 @@ const signupService = async (data) => {
 const loginService = async (data) => {
   try {
     const { email, password } = data;
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ email }).populate("branch");
     if (!user) {
       throw new Error("Email chưa đăng ký");
     }
@@ -42,7 +42,7 @@ const loginService = async (data) => {
       throw new Error("Mật khẩu không đúng");
     }
     const token = jwt.sign(
-      { userId: user._id, email: user.email, is_admin: user.is_admin },
+      { userId: user._id, email: user.email, is_admin: user.is_admin, branch: user.branch ? user.branch : null },
       process.env.JWT_SECRET,
       {
         expiresIn: "1h", // Thời gian hết hạn của token

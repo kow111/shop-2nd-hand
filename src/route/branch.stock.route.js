@@ -3,6 +3,7 @@ const {
   getStockByBranch,
   getStockByProduct,
   getStockByBranchAndProduct,
+  getStockByBranchAndManyProduct,
   updateStock,
 } = require("../controller/branch.stock.controller");
 
@@ -14,6 +15,7 @@ routerAPI.get(
   "/branch/:branchId/product/:productId",
   getStockByBranchAndProduct
 );
+routerAPI.get("/product", getStockByBranchAndManyProduct);
 routerAPI.put("/branch/:branchId/product/:productId", updateStock);
 
 module.exports = routerAPI;

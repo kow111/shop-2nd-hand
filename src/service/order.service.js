@@ -27,51 +27,51 @@ const createOrderService = async (data) => {
       shippingFee,
     } = data;
 
+    const availableProducts = [];
+    const pendingProducts = [];
+
     for (const item of products) {
-      // const product = await Product.findById(item.productId).session(session);
       const branchStock = await BranchStock.findOne({
         branch: branchId,
         product: item.productId,
-      });
-      if (!branchStock || branchStock.quantity < item.quantity) {
-        throw new Error(
-          "Sản phẩm không tồn tại trong kho chi nhanh hoặc số lượng không đủ"
-        );
+      }).session(session);
+
+      if (branchStock && branchStock.quantity >= item.quantity) {
+        // Trừ trực tiếp số lượng trong kho nếu đủ hàng
+        branchStock.quantity -= item.quantity;
+        await branchStock.save({ session });
+
+        availableProducts.push({
+          product: item.productId,
+          quantity: item.quantity,
+          priceAtCreate: item.priceAtCreate,
+        });
+      } else {
+        // Đưa vào danh sách chờ nếu không đủ hàng
+        pendingProducts.push({
+          product: item.productId,
+          quantity: item.quantity,
+          price: item.priceAtCreate,
+        });
       }
-      branchStock.quantity -= item.quantity;
-      await branchStock.save({ session });
-
-      // if (!product || product.quantity < item.quantity) {
-      //   throw new Error(
-      //     `Sản phẩm ${product.productName} không đủ số lượng để đặt hàng, số lượng sản phẩm hiện có: ${product.quantity}`
-      //   );
-      // }
-
-      // product.quantity -= item.quantity;
-      // await product.save({ session });
     }
 
+
+    // Xử lý mã giảm giá nếu có
     if (discountCode) {
-      discountCode.map(async (item) => {
+      for (const item of discountCode) {
         await applyDiscountService(item, userId);
-      });
+      }
     }
-    // if (discountCode) {
-    //   await applyDiscountService(discountCode, userId);
-    // } else {
-    //   discountCode = null;
-    // }
 
     // Tạo đơn hàng trong session
     const order = await Order.create(
       [
         {
           user: userId,
-          products: products.map((item) => ({
-            product: item.productId,
-            quantity: item.quantity,
-            priceAtCreate: item.priceAtCreate,
-          })),
+          products: availableProducts,
+          pendingProducts,
+          branch: branchId,
           totalAmount,
           paymentMethod,
           discountCode,
@@ -181,7 +181,9 @@ const changeOrderPaymentStatusService = async (orderId, status) => {
 const getOrderByUserService = async (userId) => {
   try {
     let orders = await Order.find({ user: userId })
+      .populate("branch")
       .populate("products.product")
+      .populate("pendingProducts.product")
       .populate("discountCode");
     return orders;
   } catch (error) {
@@ -192,7 +194,9 @@ const getOrderByUserService = async (userId) => {
 const getOrderByIdService = async (orderId) => {
   try {
     let order = await Order.findById(orderId)
+      .populate("branch")
       .populate("products.product")
+      .populate("pendingProducts.product")
       .populate("discountCode");
     return order;
   } catch (error) {
@@ -206,7 +210,8 @@ const getProductUserPurchasedService = async (userId) => {
     const orders = await Order.find({
       user: userId,
       status: "DELIVERED",
-    }).populate("products.product");
+    }).populate("products.product")
+      .populate("pendingProducts.product");
 
     // Lấy danh sách review của user
     const reviews = await Review.find({ user: userId }).populate("product");
@@ -257,6 +262,8 @@ const getOrderByAdminService = async () => {
   try {
     let orders = await Order.find()
       .populate("products.product")
+      .populate("pendingProducts.product")
+      .populate("branch")
       .populate("discountCode")
       .sort({ createdAt: -1 });
     return {

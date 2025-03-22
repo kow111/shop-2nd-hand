@@ -14,6 +14,7 @@ const userSchema = new mongoose.Schema({
   otp: { type: String, default: null },
   favourites: [{ type: mongoose.Schema.Types.ObjectId, ref: "Product" }],
   discounts: [{ type: mongoose.Schema.Types.ObjectId, ref: "Discount" }],
+  branch: [{ type: mongoose.Schema.Types.ObjectId, ref: "Branch" }]
 });
 
 userSchema.post("save", async function (user) {

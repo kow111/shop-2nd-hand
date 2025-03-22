@@ -1,9 +1,10 @@
 const Branch = require("../model/branch.model");
 
 const createBranchService = async (data) => {
-  const { address } = data;
+  const { name, address } = data;
   try {
     const branch = await Branch.create({
+      name,
       address,
     });
     return branch;
@@ -22,11 +23,12 @@ const getBranchService = async () => {
 };
 
 const updateBranchService = async (id, data) => {
-  const { address } = data;
+  const { name, address } = data;
   try {
     const branch = await Branch.findByIdAndUpdate(
       id,
       {
+        name,
         address,
       },
       { new: true }

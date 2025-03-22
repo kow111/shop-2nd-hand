@@ -38,6 +38,7 @@ const getProduct = async (req, res) => {
       selectedOptionPrice,
       color,
       condition,
+      selectedBranch,
     } = req.query;
 
     let rs = await getProductService({
@@ -49,6 +50,7 @@ const getProduct = async (req, res) => {
       selectedOptionPrice,
       color,
       condition,
+      selectedBranch,
     });
     return res.status(200).json({
       DT: rs,
