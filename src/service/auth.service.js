@@ -7,7 +7,7 @@ const transporter = require("../config/email.transporter");
 
 const signupService = async (data) => {
   try {
-    const { email, password } = data;
+    const { email, password, username } = data;
     const user = await User.findOne({ email });
     if (user) {
       throw new Error("Email đã tồn tài");
@@ -21,6 +21,7 @@ const signupService = async (data) => {
     let rs = await User.create({
       email,
       password: hashedPassword,
+      username,
       image:
         "https://firebasestorage.googleapis.com/v0/b/shop-2nd-hand.appspot.com/o/default-image.png?alt=media",
     });

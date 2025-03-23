@@ -15,10 +15,11 @@ const postSignupUser = async (req, res) => {
     return res.status(400).json({ DT: null, EM: errorMessages[0] });
   }
   try {
-    const { email, password } = req.body;
+    const { email, password, username } = req.body;
     let data = {
       email,
       password,
+      username,
     };
     let rs = await signupService(data);
     return res.status(200).json({
