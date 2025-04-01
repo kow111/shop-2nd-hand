@@ -36,8 +36,30 @@ const getBlogBySlugService = async (slug) => {
   }
 };
 
+const updateBlogService = async (id, data) => {
+  const { title, content, image, status } = data;
+  try {
+    const slug = createSlug(title);
+    const blog = await Blog.findByIdAndUpdate(
+      id,
+      {
+        title,
+        content,
+        image,
+        status,
+        slug,
+      },
+      { new: true, runValidators: true }
+    );
+    return blog;
+  } catch (err) {
+    throw new Error(err.message);
+  }
+};
+
 module.exports = {
   createBlogService,
   getBlogService,
   getBlogBySlugService,
+  updateBlogService,
 };
