@@ -17,6 +17,7 @@ const reviewSchema = new mongoose.Schema({
     min: 1,
     max: 5,
   },
+  images: { type: [String], default: [] },
   comment: {
     type: String,
     required: false,
