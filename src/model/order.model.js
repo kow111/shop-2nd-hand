@@ -30,7 +30,6 @@ const orderSchema = new mongoose.Schema({
   branch: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Branch",
-    required: true,
   },
   shippingFee: { type: Number, default: 0 },
   totalAmount: { type: Number, required: true },
