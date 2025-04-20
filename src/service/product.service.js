@@ -1,4 +1,4 @@
-const { default: mongoose } = require("mongoose");
+const { default: mongoose, Types } = require("mongoose");
 const Product = require("../model/product.model");
 
 const createProductService = async (data) => {
@@ -126,6 +126,7 @@ const getProductService = async (filter = {}) => {
     //     totalPages,
     //   };
     // }
+    console.log("filter", filter);
     const pipeline = [];
     let selectedBranchId = null;
     if (filter.selectedBranch && filter.selectedBranch != 0) {
@@ -146,13 +147,23 @@ const getProductService = async (filter = {}) => {
 
     // 2. Lọc theo các thuộc tính của sản phẩm
     if (filter.category) {
-      pipeline.push({ $match: { category: { $in: filter.category } } });
+      pipeline.push({
+        $match:
+        {
+          category: { $in: filter.category.map(id => new Types.ObjectId(id)) }
+        }
+      });
     }
     if (filter.color) {
-      pipeline.push({ $match: { color: { $in: filter.color } } });
+      pipeline.push({
+        $match:
+          { color: new Types.ObjectId(filter.color) }
+      });
     }
     if (filter.condition) {
-      pipeline.push({ $match: { condition: { $in: filter.condition } } });
+      pipeline.push({
+        $match: { condition: filter.condition }
+      });
     }
     if (filter.selectedOptionPrice !== undefined) {
       if (filter.selectedOptionPrice == 0) {
@@ -269,7 +280,6 @@ const getProductService = async (filter = {}) => {
     });
     // Thực thi pipeline
     const result = await Product.aggregate(pipeline);
-
     // Lấy kết quả từ facet
     const products = result[0].products;
     const totalCount = result[0].totalCount[0]
