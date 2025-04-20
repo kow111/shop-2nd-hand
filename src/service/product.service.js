@@ -229,10 +229,10 @@ const getProductService = async (filter = {}) => {
               filter.selectedOptionStock == 0
                 ? 0
                 : filter.selectedOptionStock == 1
-                ? { $lt: 10 }
-                : filter.selectedOptionStock == 2
-                ? { $gt: 0 }
-                : { $exists: true },
+                  ? { $lt: 10 }
+                  : filter.selectedOptionStock == 2
+                    ? { $gt: 0 }
+                    : { $exists: true },
           },
         });
       }
@@ -259,7 +259,7 @@ const getProductService = async (filter = {}) => {
     sort._id = 1;
 
     // 7. Phân trang
-    const limit = 10;
+    const limit = parseInt(filter.limit) || 10;
     const skip = filter.page ? (filter.page - 1) * limit : 0;
     pipeline.push({
       $facet: {
