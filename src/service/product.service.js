@@ -126,7 +126,6 @@ const getProductService = async (filter = {}) => {
     //     totalPages,
     //   };
     // }
-    console.log("filter", filter);
     const pipeline = [];
     let selectedBranchId = null;
     if (filter.selectedBranch && filter.selectedBranch != 0) {
