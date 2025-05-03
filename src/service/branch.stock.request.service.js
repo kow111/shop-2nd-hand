@@ -1,4 +1,5 @@
 const BranchStockRequest = require('../model/branch.stock.request.model');
+const Order = require('../model/order.model');
 const mongoose = require('mongoose');
 
 const postStockRequestService = async (branch, products, userId) => {
@@ -102,10 +103,33 @@ const deleteStockRequestService = async (requestId) => {
     }
 };
 
+const getPendingStockByBranchAndProductService = async (branchId, productId) => {
+    try {
+        const orders = await Order.find({
+            branch: branchId,
+            status: { $nin: ["SHIPPED", "DELIVERED", "CANCELLED"] },
+            "pendingProducts.product": productId
+        }).select("pendingProducts");
+        let totalPending = 0;
+
+        for (const order of orders) {
+            for (const item of order.pendingProducts) {
+                if (item.product.toString() === productId.toString()) {
+                    totalPending += item.quantity || 0;
+                }
+            }
+        }
+        return totalPending;
+    } catch (error) {
+        throw new Error(error.message);
+    }
+}
+
 module.exports = {
     postStockRequestService,
     getStockRequestService,
     updateStockRequestStatusService,
     updateProductStatusService,
-    deleteStockRequestService
+    deleteStockRequestService,
+    getPendingStockByBranchAndProductService
 };

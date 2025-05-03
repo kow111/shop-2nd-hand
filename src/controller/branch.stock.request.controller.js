@@ -4,6 +4,7 @@ const {
     updateStockRequestStatusService,
     updateProductStatusService,
     deleteStockRequestService,
+    getPendingStockByBranchAndProductService
 } = require('../service/branch.stock.request.service');
 
 const postStockRequest = async (req, res) => {
@@ -87,10 +88,28 @@ const deleteStockRequest = async (req, res) => {
     }
 }
 
+const getPendingStockByBranchAndProduct = async (req, res) => {
+    try {
+        const { branchId, productId } = req.query;
+        const pendingStockRequest = await getPendingStockByBranchAndProductService(branchId, productId);
+        return res.status(200).json({
+            DT: pendingStockRequest,
+            EM: "Lấy số lượng hàng đang cần thành công",
+        });
+    } catch (error) {
+        return res.status(400).json({
+            DT: null,
+            EM: error.message,
+        });
+    }
+}
+
+
 module.exports = {
     postStockRequest,
     getStockRequest,
     updateStockRequestStatus,
     updateProductStatus,
     deleteStockRequest,
+    getPendingStockByBranchAndProduct
 };

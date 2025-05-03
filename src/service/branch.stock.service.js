@@ -1,5 +1,6 @@
 const BranchStock = require("../model/branch.stock.model");
 const mongoose = require("mongoose");
+const Order = require("../model/order.model");
 
 const getStockByBranchService = async (branchId) => {
   try {
@@ -105,7 +106,49 @@ const updateStockService = async (branchId, productId, quantity, type) => {
         stock.quantity -= Number(quantity);
       }
       if (type === "increase") {
-        stock.quantity += Number(quantity);
+        let quantityToAdd = Number(quantity); // số lượng vừa nhập thêm
+        let quantityAvailable = quantityToAdd;
+
+        // Tìm các đơn hàng còn chờ sản phẩm
+        const orders = await Order.find({
+          branch: branchId,
+          status: { $nin: ["SHIPPED", "DELIVERED", "CANCELLED"] },
+          "pendingProducts.product": productId
+        });
+
+        for (const order of orders) {
+          let updated = false;
+
+          // Lọc ra các pendingProducts thuộc productId
+          const newPending = [];
+          for (const item of order.pendingProducts) {
+            if (
+              item.product.toString() === productId.toString() &&
+              quantityAvailable >= item.quantity
+            ) {
+              // Đủ hàng → chuyển sang products
+              order.products.push({
+                product: item.product,
+                quantity: item.quantity,
+                priceAtCreate: item.priceAtCreate,
+              });
+
+              quantityAvailable -= item.quantity;
+              updated = true;
+            } else {
+              newPending.push(item);
+            }
+          }
+
+          if (updated) {
+            order.pendingProducts = newPending;
+            await order.save();
+          }
+          if (quantityAvailable <= 0) break;
+        }
+
+        stock.quantity += quantityAvailable;
+        await stock.save();
       }
       await stock.save();
     }
