@@ -40,6 +40,13 @@ const updateBlogService = async (id, data) => {
   const { title, content, image, status } = data;
   try {
     const slug = createSlug(title);
+    const found = await Blog.find({
+      _id: { $ne: id },
+      slug: slug,
+    });
+    if (found.length > 0) {
+      throw new Error("Đã tồn tại blog với slug này");
+    }
     const blog = await Blog.findByIdAndUpdate(
       id,
       {
