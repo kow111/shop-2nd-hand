@@ -84,10 +84,10 @@ const updateUserAdminService = async (userId, data) => {
       throw new Error("Không tìm thấy người dùng");
     }
 
-    const { username, is_admin, is_verified, is_active, branch, image } = data;
+    const { username, role, is_verified, is_active, branch, image } = data;
 
     user.username = username || user.username;
-    user.is_admin = is_admin || user.is_admin;
+    user.role = role || user.role;
     user.is_verified = is_verified || user.is_verified;
     user.is_active = is_active || user.is_active;
     user.image = image || user.image;

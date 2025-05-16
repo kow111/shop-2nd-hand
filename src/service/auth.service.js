@@ -43,7 +43,12 @@ const loginService = async (data) => {
       throw new Error("Mật khẩu không đúng");
     }
     const token = jwt.sign(
-      { userId: user._id, email: user.email, is_admin: user.is_admin, branch: user.branch ? user.branch : null },
+      {
+        userId: user._id,
+        email: user.email,
+        role: user.role,
+        branch: user.branch ? user.branch : null,
+      },
       process.env.JWT_SECRET,
       {
         expiresIn: "1h", // Thời gian hết hạn của token

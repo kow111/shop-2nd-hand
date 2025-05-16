@@ -9,12 +9,12 @@ const userSchema = new mongoose.Schema({
   gender: { type: String, enum: ["MALE", "FEMALE", "OTHER"] },
   image: { type: String, default: "" },
   is_verified: { type: Boolean, default: false },
-  is_admin: { type: Boolean, default: false },
+  role: { type: String, enum: ["USER", "ADMIN", "MANAGER"], default: "USER" },
   is_active: { type: Boolean, default: true },
   otp: { type: String, default: null },
   favourites: [{ type: mongoose.Schema.Types.ObjectId, ref: "Product" }],
   discounts: [{ type: mongoose.Schema.Types.ObjectId, ref: "Discount" }],
-  branch: [{ type: mongoose.Schema.Types.ObjectId, ref: "Branch" }]
+  branch: [{ type: mongoose.Schema.Types.ObjectId, ref: "Branch" }],
 });
 
 userSchema.post("save", async function (user) {
