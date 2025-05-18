@@ -113,7 +113,7 @@ const updateStockService = async (branchId, productId, quantity, type) => {
         const orders = await Order.find({
           branch: branchId,
           status: { $nin: ["SHIPPED", "DELIVERED", "CANCELLED"] },
-          "pendingProducts.product": productId
+          "pendingProducts.product": productId,
         });
 
         for (const order of orders) {
@@ -128,7 +128,9 @@ const updateStockService = async (branchId, productId, quantity, type) => {
             ) {
               // Đủ hàng → chuyển sang products
               order.products.push({
-                product: item.product,
+                image: item.image,
+                name: item.name,
+                size: item.size,
                 quantity: item.quantity,
                 priceAtCreate: item.priceAtCreate,
               });

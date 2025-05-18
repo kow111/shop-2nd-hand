@@ -27,6 +27,7 @@ const branchStockRoute = require("./route/branch.stock.route");
 const shippingRoute = require("./route/shipping.route");
 const branchStockRequestRoute = require("./route/branch.stock.request.route");
 const blogRoute = require("./route/blog.route");
+const openaiRoute = require("./route/openai.route");
 
 dotenv.config();
 
@@ -58,6 +59,7 @@ app.use("/api/v1/branch-stock", branchStockRoute);
 app.use("/api/v1/shipping", shippingRoute);
 app.use("/api/v1/branch-stock-request", branchStockRequestRoute);
 app.use("/api/v1/blog", blogRoute);
+app.use("/api/v1/openai", openaiRoute);
 
 // Khởi tạo Socket.io
 initSocket(server);

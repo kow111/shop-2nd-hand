@@ -43,6 +43,9 @@ const createOrderService = async (data) => {
 
         availableProducts.push({
           product: item.productId,
+          image: item.image,
+          name: item.name,
+          size: item.size,
           quantity: item.quantity,
           priceAtCreate: item.priceAtCreate,
         });
@@ -50,12 +53,14 @@ const createOrderService = async (data) => {
         // Đưa vào danh sách chờ nếu không đủ hàng
         pendingProducts.push({
           product: item.productId,
+          image: item.image,
+          name: item.name,
+          size: item.size,
           quantity: item.quantity,
-          price: item.priceAtCreate,
+          priceAtCreate: item.priceAtCreate,
         });
       }
     }
-
 
     // Xử lý mã giảm giá nếu có
     if (discountCode) {
@@ -210,7 +215,8 @@ const getProductUserPurchasedService = async (userId) => {
     const orders = await Order.find({
       user: userId,
       status: "DELIVERED",
-    }).populate("products.product")
+    })
+      .populate("products.product")
       .populate("pendingProducts.product");
 
     // Lấy danh sách review của user
