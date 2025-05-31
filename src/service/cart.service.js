@@ -4,10 +4,22 @@ const { getStockByProductService } = require("./branch.stock.service");
 
 const getCartItemService = async (userId) => {
   try {
-    // const rs = await Cart.findOne({ user: userId }).populate("items.product");
-    //delete the product with quantity = 0 in cart before return and then save the cart
     const cart = await Cart.findOne({ user: userId }).populate("items.product");
-    cart.items = cart.items.filter((item) => item.product.quantity > 0);
+
+    // Get branch stock for each product in cart
+    for (let item of cart.items) {
+      const branchStocks = await getStockByProductService(item.product._id);
+      const totalAvailableQuantity = branchStocks.reduce((sum, stock) => sum + stock.quantity, 0);
+
+      if (totalAvailableQuantity === 0) {
+        // Remove item if no stock available
+        cart.items = cart.items.filter(cartItem => cartItem.product._id.toString() !== item.product._id.toString());
+      } else if (item.quantity > totalAvailableQuantity) {
+        // Adjust quantity if it exceeds available stock
+        item.quantity = totalAvailableQuantity;
+      }
+    }
+
     const rs = await cart.save();
     return rs;
   } catch (error) {
