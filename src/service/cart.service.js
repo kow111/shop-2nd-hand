@@ -1,5 +1,6 @@
 const Cart = require("../model/cart.model");
 const Product = require("../model/product.model");
+const { getStockByProductService } = require("./branch.stock.service");
 
 const getCartItemService = async (userId) => {
   try {
@@ -23,10 +24,12 @@ const updateCartItemService = async (userId, data) => {
       return await removeProductsFromCart(cart, data.deleteProduct);
     }
 
-    const product = await Product.findById(data.productId);
-    if (data.quantity > product.quantity) {
+    const branchStocks = await getStockByProductService(data.productId);
+    const totalAvailableQuantity = branchStocks.reduce((sum, stock) => sum + stock.quantity, 0);
+
+    if (data.quantity > totalAvailableQuantity) {
       throw new Error(
-        `Số lượng sản phẩm ${product.productName} không đủ. Số lượng còn lại là ${product.quantity}.`
+        `Số lượng sản phẩm không đủ. Tổng số lượng các chi nhánh còn lại là ${totalAvailableQuantity}.`
       );
     }
 
