@@ -117,11 +117,14 @@ const cancelOrderService = async (orderId, userId) => {
       }
     }
     for (const item of order.products) {
-      const product = await Product.findById(item.product);
+      const branchStock = await BranchStock.findOne({
+        product: item.product,
+        branch: order.branch
+      });
 
-      if (product) {
-        product.quantity += item.quantity;
-        await product.save();
+      if (branchStock) {
+        branchStock.quantity += item.quantity;
+        await branchStock.save();
       }
     }
     order.status = "CANCELLED";
