@@ -33,7 +33,13 @@ const createCancelRequestService = async (data) => {
 
 const getCancelRequestService = async (userId) => {
   try {
-    const rs = await CancelRequest.find({ user: userId }).populate("order");
+    const rs = await CancelRequest.find({ user: userId }).populate({
+      path: "order",
+      populate: {
+        path: "branch",
+        model: "Branch"
+      }
+    });
     return rs;
   } catch (error) {
     throw new Error(error.message);
@@ -48,6 +54,10 @@ const getCancelRequestAdminService = async () => {
         path: "products.product",
         model: "Product",
       },
+      populate: {
+        path: "branch",
+        model: "Branch"
+      }
     });
     return rs;
   } catch (error) {
