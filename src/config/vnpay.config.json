@@ -1,6 +1,6 @@
 {
-  "vnp_TmnCode": "7008KNCY",
-  "vnp_HashSecret": "T0CK8I2V02PK6WYQ6CJ0WF9NZFG2XKC0",
+  "vnp_TmnCode": "ZXGMEYJH",
+  "vnp_HashSecret": "ZAMBKR1VV37O8GUSL3M42N295IYEJKRC",
   "vnp_Url": "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html",
-  "vnp_Api": "https://ishio-shop.onrender.com/api/v1/payment/vnpay_ipn"
+  "vnp_Api": "https://shop-2nd-hand.onrender.com/api/v1/payment/vnpay_ipn"
 }
