@@ -26,7 +26,7 @@ async function createPaymentUrl(amount, ipAddr, orderId, returnUrl) {
         const TxnRef = `${baseOrderId}-ATTEMPT${randomAttempt}`;
 
         let vnp_Params = {
-            'vnp_Version': '2.1.0',
+            'vnp_Version': '2.0.0',
             'vnp_Command': 'pay',
             'vnp_TmnCode': tmnCode,
             'vnp_Locale': 'vn',
@@ -39,14 +39,16 @@ async function createPaymentUrl(amount, ipAddr, orderId, returnUrl) {
             'vnp_IpAddr': ipAddr,
             'vnp_CreateDate': createDate,
         };
-
+        console.log('Sorted params:', vnp_Params);
         vnp_Params = sortObject(vnp_Params);
+        console.log('Sorted params:', vnp_Params);
         const signData = querystring.stringify(vnp_Params, { encode: false });
         const hmac = crypto.createHmac("sha512", secretKey);
         const signed = hmac.update(Buffer.from(signData, 'utf-8')).digest("hex");
         vnp_Params['vnp_SecureHash'] = signed;
 
         vnpUrl += '?' + querystring.stringify(vnp_Params, { encode: false });
+        console.log('Final URL:', vnpUrl);
         return vnpUrl;
     } catch (error) {
         throw new Error(error.message);
