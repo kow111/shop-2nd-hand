@@ -6,6 +6,7 @@ const {
   getStockByBranchAndManyProduct,
   updateStock,
 } = require("../controller/branch.stock.controller");
+const { auth, requireAdmin } = require("../middleware/auth");
 
 const routerAPI = express.Router();
 
@@ -16,6 +17,11 @@ routerAPI.get(
   getStockByBranchAndProduct
 );
 routerAPI.get("/product", getStockByBranchAndManyProduct);
-routerAPI.put("/branch/:branchId/product/:productId", updateStock);
+routerAPI.put(
+  "/branch/:branchId/product/:productId",
+  auth,
+  requireAdmin,
+  updateStock
+);
 
 module.exports = routerAPI;

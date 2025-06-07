@@ -1,6 +1,7 @@
 const BranchStock = require("../model/branch.stock.model");
 const mongoose = require("mongoose");
 const Order = require("../model/order.model");
+const { addLogService } = require("./log.service");
 
 const getStockByBranchService = async (branchId) => {
   try {
@@ -82,7 +83,13 @@ const getStockByProductService = async (productId) => {
   }
 };
 
-const updateStockService = async (branchId, productId, quantity, type) => {
+const updateStockService = async (
+  branchId,
+  productId,
+  quantity,
+  type,
+  userId
+) => {
   try {
     const stock = await BranchStock.findOne({
       branch: branchId,
@@ -97,6 +104,14 @@ const updateStockService = async (branchId, productId, quantity, type) => {
         product: productId,
         quantity: Number(quantity),
       });
+      // Ghi log khi tạo mới kho
+      await addLogService({
+        user: userId,
+        product: productId,
+        branch: branchId,
+        quantity: Number(quantity),
+        action: "ADD",
+      });
       return newStock;
     } else {
       if (type === "decrease" && stock.quantity < Number(quantity)) {
@@ -104,9 +119,25 @@ const updateStockService = async (branchId, productId, quantity, type) => {
       }
       if (type === "decrease") {
         stock.quantity -= Number(quantity);
+        // Ghi log khi giảm số lượng kho
+        await addLogService({
+          user: userId,
+          product: productId,
+          branch: branchId,
+          quantity: Number(quantity),
+          action: "REMOVE",
+        });
       }
       if (type === "increase") {
         let quantityToAdd = Number(quantity); // số lượng vừa nhập thêm
+        await addLogService({
+          user: userId,
+          product: productId,
+          branch: branchId,
+          quantity: quantityToAdd,
+          action: "ADD",
+        });
+
         let quantityAvailable = quantityToAdd;
 
         // Tìm các đơn hàng còn chờ sản phẩm
@@ -136,6 +167,13 @@ const updateStockService = async (branchId, productId, quantity, type) => {
               });
 
               quantityAvailable -= item.quantity;
+              await addLogService({
+                user: userId,
+                product: productId,
+                branch: branchId,
+                quantity: item.quantity,
+                action: "REMOVE",
+              });
               updated = true;
             } else {
               newPending.push(item);

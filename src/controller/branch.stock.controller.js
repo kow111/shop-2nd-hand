@@ -77,7 +77,14 @@ const updateStock = async (req, res) => {
   try {
     const { branchId, productId } = req.params;
     const { quantity, type } = req.body;
-    const stock = await updateStockService(branchId, productId, quantity, type);
+    const userId = req.user.userId;
+    const stock = await updateStockService(
+      branchId,
+      productId,
+      quantity,
+      type,
+      userId
+    );
     return res.status(200).json({
       DT: stock,
       EM: "Cập nhật kho thành công",
@@ -89,8 +96,6 @@ const updateStock = async (req, res) => {
     });
   }
 };
-
-
 
 module.exports = {
   getStockByBranch,
