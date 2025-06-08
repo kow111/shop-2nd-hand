@@ -22,7 +22,7 @@ const logSchema = new mongoose.Schema(
     },
     action: {
       type: String,
-      enum: ["ADD", "REMOVE"],
+      enum: ["ADD", "REMOVE", "UPDATE"],
       required: true,
     },
   },

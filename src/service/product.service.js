@@ -1,5 +1,6 @@
 const { default: mongoose, Types } = require("mongoose");
 const Product = require("../model/product.model");
+const { addLogService } = require("./log.service");
 
 const createProductService = async (data) => {
   try {
@@ -147,21 +148,21 @@ const getProductService = async (filter = {}) => {
     // 2. Lọc theo các thuộc tính của sản phẩm
     if (filter.category) {
       pipeline.push({
-        $match:
-        {
-          category: { $in: filter.category.map(id => new Types.ObjectId(id)) }
-        }
+        $match: {
+          category: {
+            $in: filter.category.map((id) => new Types.ObjectId(id)),
+          },
+        },
       });
     }
     if (filter.color) {
       pipeline.push({
-        $match:
-          { color: new Types.ObjectId(filter.color) }
+        $match: { color: new Types.ObjectId(filter.color) },
       });
     }
     if (filter.condition) {
       pipeline.push({
-        $match: { condition: filter.condition }
+        $match: { condition: filter.condition },
       });
     }
     if (filter.selectedOptionPrice !== undefined) {
@@ -239,10 +240,10 @@ const getProductService = async (filter = {}) => {
               filter.selectedOptionStock == 0
                 ? 0
                 : filter.selectedOptionStock == 1
-                  ? { $lt: 10 }
-                  : filter.selectedOptionStock == 2
-                    ? { $gt: 0 }
-                    : { $exists: true },
+                ? { $lt: 10 }
+                : filter.selectedOptionStock == 2
+                ? { $gt: 0 }
+                : { $exists: true },
           },
         });
       }
@@ -304,7 +305,7 @@ const getProductByIdService = async (id) => {
   }
 };
 
-const updateProductService = async (id, data, imageActions) => {
+const updateProductService = async (id, data, imageActions, userId) => {
   try {
     let product = await Product.findById(id);
 
@@ -320,7 +321,19 @@ const updateProductService = async (id, data, imageActions) => {
       if (data.quantity < 0) {
         throw new Error("Số lượng sản phẩm không hợp lệ");
       }
-      if (data.quantity) product.quantity = data.quantity;
+      if (data.quantity) {
+        if (product.quantity !== data.quantity) {
+          // Log the change in quantity
+          await addLogService({
+            user: userId,
+            product: product._id,
+            branch: null,
+            quantity: data.quantity,
+            action: "UPDATE",
+          });
+        }
+        product.quantity = data.quantity;
+      }
       if (data.original_price < 0) {
         throw new Error("Giá gốc sản phẩm không hợp lệ");
       }

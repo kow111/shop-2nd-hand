@@ -108,8 +108,9 @@ const putUpdateProduct = async (req, res) => {
       color,
       condition,
     };
+    const userId = req.user.userId;
     let { actions } = req.body;
-    let rs = await updateProductService(id, data, actions);
+    let rs = await updateProductService(id, data, actions, userId);
     return res.status(200).json({
       DT: rs,
       EM: "Cập nhật sản phẩm thành công",
