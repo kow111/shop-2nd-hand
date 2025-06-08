@@ -324,13 +324,23 @@ const updateProductService = async (id, data, imageActions, userId) => {
       if (data.quantity) {
         if (product.quantity !== data.quantity) {
           // Log the change in quantity
-          await addLogService({
-            user: userId,
-            product: product._id,
-            branch: null,
-            quantity: data.quantity,
-            action: "UPDATE",
-          });
+          if (product.quantity < data.quantity) {
+            await addLogService({
+              user: userId,
+              product: product._id,
+              branch: null,
+              quantity: data.quantity - product.quantity,
+              action: "ADD",
+            });
+          } else {
+            await addLogService({
+              user: userId,
+              product: product._id,
+              branch: null,
+              quantity: product.quantity - data.quantity,
+              action: "REMOVE",
+            });
+          }
         }
         product.quantity = data.quantity;
       }
