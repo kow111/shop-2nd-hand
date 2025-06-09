@@ -158,7 +158,11 @@ const updateStockService = async (
               quantityAvailable >= item.quantity
             ) {
               // Đủ hàng → chuyển sang products
+              if (!order.products) {
+                order.products = [];
+              }
               order.products.push({
+                product: item.product,
                 image: item.image,
                 name: item.name,
                 size: item.size,
