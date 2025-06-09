@@ -119,7 +119,7 @@ const cancelOrderService = async (orderId, userId) => {
     for (const item of order.products) {
       const branchStock = await BranchStock.findOne({
         product: item.product,
-        branch: order.branch
+        branch: order.branch,
       });
 
       if (branchStock) {
@@ -285,7 +285,7 @@ const getOrderByAdminService = async () => {
 
 const isOrderCanceled = async (orderId) => {
   const order = await Order.findById(orderId);
-  return order.status === "CANCELLED";
+  return order.status !== "PENDING";
 };
 
 module.exports = {
