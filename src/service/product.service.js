@@ -240,10 +240,10 @@ const getProductService = async (filter = {}) => {
               filter.selectedOptionStock == 0
                 ? 0
                 : filter.selectedOptionStock == 1
-                ? { $lt: 10 }
-                : filter.selectedOptionStock == 2
-                ? { $gt: 0 }
-                : { $exists: true },
+                  ? { $lt: 10 }
+                  : filter.selectedOptionStock == 2
+                    ? { $gt: 0 }
+                    : { $exists: true },
           },
         });
       }
@@ -321,7 +321,7 @@ const updateProductService = async (id, data, imageActions, userId) => {
       if (data.quantity < 0) {
         throw new Error("Số lượng sản phẩm không hợp lệ");
       }
-      if (data.quantity) {
+      if (typeof data.quantity === 'number' && data.quantity >= 0) {
         if (product.quantity !== data.quantity) {
           // Log the change in quantity
           if (product.quantity < data.quantity) {
