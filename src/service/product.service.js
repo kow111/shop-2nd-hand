@@ -347,11 +347,11 @@ const updateProductService = async (id, data, imageActions, userId) => {
       if (data.original_price < 0) {
         throw new Error("Giá gốc sản phẩm không hợp lệ");
       }
-      if (data.original_price) product.original_price = data.original_price;
+      if (typeof data.original_price === 'number') product.original_price = data.original_price;
       if (data.price < 0) {
         throw new Error("Giá sản phẩm không hợp lệ");
       }
-      if (data.price) product.price = data.price;
+      if (typeof data.price === 'number') product.price = data.price;
       if (data.color) product.color = data.color;
       if (data.condition) product.condition = data.condition;
     }
