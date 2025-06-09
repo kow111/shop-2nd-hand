@@ -43,7 +43,7 @@ const getStockByBranchAndManyProductService = async (branchId, products) => {
         product: new mongoose.Types.ObjectId(item.product._id),
       });
 
-      if (branchStock && branchStock.quantity < item.quantity) {
+      if (!branchStock || branchStock.quantity < item.quantity) {
         productOutOfStock.push(item.product._id);
       }
     }
