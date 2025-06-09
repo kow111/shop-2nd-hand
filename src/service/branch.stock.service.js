@@ -120,7 +120,7 @@ const updateStockService = async (
           action: "ADD",
         });
 
-        let quantityAvailable = quantityToAdd;
+        let quantityAvailable = quantityToAdd + stock.quantity;
 
         // Tìm các đơn hàng còn chờ sản phẩm
         const orders = await Order.find({
@@ -173,7 +173,7 @@ const updateStockService = async (
           if (quantityAvailable <= 0) break;
         }
 
-        stock.quantity += quantityAvailable;
+        stock.quantity = quantityAvailable;
         await stock.save();
       }
       await stock.save();
