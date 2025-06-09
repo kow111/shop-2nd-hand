@@ -171,13 +171,13 @@ const updateStockService = async (
               });
 
               quantityAvailable -= item.quantity;
-              await addLogService({
-                user: userId,
-                product: productId,
-                branch: branchId,
-                quantity: item.quantity,
-                action: "REMOVE",
-              });
+              // await addLogService({
+              //   user: userId,
+              //   product: productId,
+              //   branch: branchId,
+              //   quantity: item.quantity,
+              //   action: "REMOVE",
+              // });
               updated = true;
             } else {
               newPending.push(item);
