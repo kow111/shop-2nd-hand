@@ -38,7 +38,7 @@ const postCreateOrder = async (req, res) => {
       shippingFee,
     };
     let rs = await createOrderService(data);
-    if (paymentMethod === "COD") {
+    if (paymentMethod === "COD" && rs.pendingProducts.length === 0) {
       addChangeOrderStatusJob({
         orderId: rs._id,
       });
