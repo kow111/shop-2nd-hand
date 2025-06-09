@@ -40,8 +40,8 @@ const getStockByProduct = async (req, res) => {
 
 const getStockByBranchAndProduct = async (req, res) => {
   try {
-    const { branchId, productId } = req.params;
-    const stock = await getStockByBranchAndProductService(branchId, productId);
+    const { branchId, products } = req.params;
+    const stock = await getStockByBranchAndProductService(branchId, products);
     return res.status(200).json({
       DT: stock,
       EM: "Lấy sản phẩm thành công",
@@ -56,10 +56,10 @@ const getStockByBranchAndProduct = async (req, res) => {
 
 const getStockByBranchAndManyProduct = async (req, res) => {
   try {
-    const { branchId, productIds } = req.query;
+    const { branchId, products } = req.query;
     const stock = await getStockByBranchAndManyProductService(
       branchId,
-      productIds
+      products
     );
     return res.status(200).json({
       DT: stock,

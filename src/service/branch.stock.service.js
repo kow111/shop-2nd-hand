@@ -26,8 +26,9 @@ const getStockByBranchAndProductService = async (branchId, productId) => {
   }
 };
 
-const getStockByBranchAndManyProductService = async (branchId, productIds) => {
+const getStockByBranchAndManyProductService = async (branchId, products) => {
   try {
+    console.log(products);
     const productOutOfStock = [];
 
     // Kiểm tra branchId có hợp lệ không
@@ -36,33 +37,14 @@ const getStockByBranchAndManyProductService = async (branchId, productIds) => {
     }
     branchId = new mongoose.Types.ObjectId(branchId);
 
-    // Kiểm tra productIds có tồn tại không
-    if (!productIds || typeof productIds !== "string") {
-      throw new Error("productIds không hợp lệ");
-    }
-
-    // Nếu productIds là một chuỗi chứa nhiều ID, ta tách thành mảng
-    productIds = productIds.split(",").map((id) => id.trim());
-
-    // Chuyển từng productId thành ObjectId
-    productIds = productIds
-      .map((id) => {
-        if (!mongoose.Types.ObjectId.isValid(id)) {
-          console.log(`ProductId không hợp lệ: ${id}`);
-          return null; // Bỏ qua nếu không hợp lệ
-        }
-        return new mongoose.Types.ObjectId(id);
-      })
-      .filter(Boolean); // Loại bỏ các giá trị null
-
-    for (const item of productIds) {
+    for (const item of products) {
       const branchStock = await BranchStock.findOne({
         branch: branchId,
-        product: item,
+        product: new mongoose.Types.ObjectId(item.product._id),
       });
 
-      if (branchStock && branchStock.quantity === 0) {
-        productOutOfStock.push(item);
+      if (branchStock && branchStock.quantity < item.quantity) {
+        productOutOfStock.push(item.product._id);
       }
     }
 
